@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { doc, getDoc, collection } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebaseConfig'
 import { UserProfile } from '../types/UserProfile.types';
 
@@ -9,37 +9,33 @@ const useUserProfile = (uid: string | null) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    console.log('uid', uid)
+    let unsubscribe: () => void; // Declare a variable to hold the unsubscribe function
+
     if (uid) {
-      console.log('called')
+      setLoading(true);
+      const docRef = doc(db, 'userProfile', uid); // Adjusted for Firebase Modular SDK
       
-      const fetchProfile = async () => {
-        try {
-          console.log('fetch profile called')
-          setLoading(true);
-          const docRef = doc(db, 'userProfile', uid); // Adjusted for Firebase Modular SDK
-          const docSnap = await getDoc(docRef);
-          console.log('docSnap', docSnap)
-
-          if (docSnap.exists()) {
-            setProfile(docSnap.data() as UserProfile);
-          } else {
-            setProfile(null);
-            setError(new Error('No profile found'));
-          }
-        } catch (e) {
-          setError(e instanceof Error ? e : new Error('An unknown error occurred'));
-        } finally {
-          setLoading(false);
+      // Set up a listener for real-time updates
+      unsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          setProfile(docSnap.data() as UserProfile);
+          setError(null);
+        } else {
+          setProfile(null);
+          setError(new Error('No profile found'));
         }
-      };
-
-      fetchProfile();
+        setLoading(false);
+      });
     } else {
-      console.log('else called')
       setLoading(false);
       setProfile(null);
     }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe(); // Unsubscribe when the component unmounts
+      }
+    };
   }, [uid]);
 
   return { profile, loading, error };

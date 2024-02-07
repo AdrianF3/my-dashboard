@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import firebaseAdmin from '../utils/firebaseAdmin';
 import HeaderNavigationBar from '@/components/SharedComponents/HeaderNavigationBar';
@@ -19,22 +19,15 @@ interface IndexPageProps {
     authenticated: boolean;
 }
 
-
-
 const IndexPage: React.FC = ({  }) => {
     const { user, loading: authLoading, logout } = useAuth();
     const [ profileUID, setProfileUID ] = useState<any>(null);
     const authenticated = !!user;
     
-
     // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, activity-tracking, budget, profile-settings
     const [currentView, setCurrentView] = React.useState<string>("dashboard");
     const { profile, loading, error } = useUserProfile(profileUID);
-    console.log('error', error)
-    console.log('profile', profile)
-    
-
-    const [ theme, setTheme ] = React.useState('bumblebee');
+    const [ theme, setTheme ] = React.useState('nord');
     const listOfThemes = [
         "light",
         "dark",
@@ -78,14 +71,11 @@ const IndexPage: React.FC = ({  }) => {
         if (profile) {
             setTheme(profile.theme);            
         }
-    }
-    , [profile]);
+    }, [profile]);
     
-      const toggleTheme = (theme: string) => {
-        setTheme(theme);
-      };
-    
-    console.log('profile', profile)
+    const toggleTheme = (theme: string) => {
+    setTheme(theme);
+    };    
 
     React.useEffect(() => {
         console.log('user', user)                                    
@@ -94,18 +84,11 @@ const IndexPage: React.FC = ({  }) => {
         }
     }, [user]);
 
-    
-    
-
-
-
-
     function handleViewChange(view: string) {
         setCurrentView(view);
     }
 
     const renderSelectedView = () => {
-
         // Example usage of profile data in the dashboard view or any other views that might need it
         if (currentView === "dashboard") {
             // Default Loading
@@ -204,35 +187,19 @@ const IndexPage: React.FC = ({  }) => {
     };
 
 
-    // Assuming the useUserProfile hook manages the fetching state internally
-    // If not authenticated, you might want to redirect or alter the UI accordingly
-
-    useEffect(() => {
-        // This effect could be used for anything that needs to run when the component mounts
-        // For example, redirecting based on auth state if needed
-    }, [authenticated]);
-
     if (authLoading) {
         return <div>Loading...</div>; // Or any other loading state you prefer
-    }
-            
-    console.log('authenticated', authenticated)
+    }        
+
     if (!authenticated) {
         // Instead of redirecting, render LoginComponent and RegisterComponent        
-        return (
-            <>
-                <HeaderNavigationBar />
-                <div className="flex flex-col bg-secondary/30 items-center justify-center min-h-screen py-12">
-                    <LoginForm />                    
-                </div>
-            </>
-        );
+        return (<>
+            <HeaderNavigationBar />
+            <div className="flex flex-col bg-secondary/30 items-center justify-center min-h-screen py-12">
+                <LoginForm />                    
+            </div>
+        </>);
     }
-
-    
-
-
-    // Adding a new testdfd
 
     return (
         <>
@@ -286,7 +253,7 @@ const IndexPage: React.FC = ({  }) => {
                     
 
                 </div>
-                {/* Generic paragraph */}
+                {/* Section to display selected content */}
                 <section className="self-center w-full h-full m-4 p-4">
                     {renderSelectedView()}
                     
@@ -303,9 +270,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const token = context.req.cookies['authToken'];        
         
         // Check if the token is undefined or a string
-        if (typeof token !== 'string') {
-            // Handle the case where the token is missing or invalid
-            // For example, redirect to a login page or return an unauthorized status
+        if (typeof token !== 'string') {            
             return {
                 props: { authenticated: false },                
             };

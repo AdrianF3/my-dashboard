@@ -21,6 +21,7 @@ Building simple, helpful tools to help manage life.
 - Implemented - Beginning to use getServerSide to load initial userData and and handle proper routing & backend integration
 - Mini Commit - testing a new deployment after a few changes - this has caused problems
 - **Fixed** - The many issues with Github by deleting the local project, copying the recent changes and reinitializing the project
+- Working on the loading of and display of recipeData 
 
 
 
