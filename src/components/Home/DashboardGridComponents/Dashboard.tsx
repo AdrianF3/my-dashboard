@@ -77,8 +77,6 @@ const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
     
     // if weather data for current city not already loaded,     
     let key = process.env.NEXT_PUBLIC_OPEN_WEATHER_API_KEY;
-console.log('key: ', key);
-
 
     // **  research better way to check against null
     if (profile && profile.zipCode && key) {
@@ -97,7 +95,7 @@ console.log('key: ', key);
             });                   
     }          
   }, [])
-  console.log('weatherData', weatherData)
+
 
 
     useEffect(() => {
@@ -159,12 +157,12 @@ console.log('key: ', key);
     
 
     return (
-        <div className="flex flex-col gap-4 justify-around rounded border-2 border-accent p-4">
+        <div className="flex flex-col gap-4 justify-around rounded border-2 border-accent self-center p-4">
                     {/* Date/Time & Weather Card */}
             <div className="card w-full h-fit bg-base-100 shadow-xl image-full">                
                 <div className="card-body flex flex-col md:flex-row justify-between">
                     {/* Date Time Section */}
-                    <div className='flex flex-col w-1/3'>   
+                    <div className='flex flex-col sm:w-full md:w-1/3'>   
                         <h2 className="text-3xl">{dateData.dayOfWeek}</h2>
                         <p>{ dateData.time + ' | ' } <span className="uppercase">{dateData.timeOfDay}</span></p>
                         <div className="pt-4 flex flex-col">
@@ -173,7 +171,7 @@ console.log('key: ', key);
                         </div>
                     </div>
                     {/* Weather Section */}
-                    <div className={`${backgroundClass} text-center  p-2 h-fit w-fit rounded-xl shadow-primary-content shadow-md w-1/3`}>
+                    <div className={`${backgroundClass} text-center p-2 h-fit rounded-xl shadow-primary-content shadow-md sm:w-full md:w-1/3`}>
                         {weatherData ? (
                             <>
                                 <div className="weather-icon flex flex-col items-center">

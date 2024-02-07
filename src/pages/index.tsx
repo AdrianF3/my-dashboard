@@ -23,12 +23,16 @@ interface IndexPageProps {
 
 const IndexPage: React.FC = ({  }) => {
     const { user, loading: authLoading, logout } = useAuth();
+    const [ profileUID, setProfileUID ] = useState<any>(null);
     const authenticated = !!user;
-    console.log('user', user)
+    
 
     // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, activity-tracking, budget, profile-settings
     const [currentView, setCurrentView] = React.useState<string>("dashboard");
-    const { profile, loading, error } = useUserProfile();
+    const { profile, loading, error } = useUserProfile(profileUID);
+    console.log('error', error)
+    console.log('profile', profile)
+    
 
     const [ theme, setTheme ] = React.useState('bumblebee');
     const listOfThemes = [
@@ -83,6 +87,13 @@ const IndexPage: React.FC = ({  }) => {
     
     console.log('profile', profile)
 
+    React.useEffect(() => {
+        console.log('user', user)                                    
+        if (user && user.uid) {
+            setProfileUID(user.uid);
+        }
+    }, [user]);
+
     
     
 
@@ -115,6 +126,8 @@ const IndexPage: React.FC = ({  }) => {
                 <div>No profile data</div>;
             </>            
         }
+        // END OF CONDITIONAL RENDERING
+
         switch (currentView) {
             case "dashboard":
                 return (
@@ -202,31 +215,28 @@ const IndexPage: React.FC = ({  }) => {
     if (authLoading) {
         return <div>Loading...</div>; // Or any other loading state you prefer
     }
-    
-
-    // Thought is to redirect or display a simple explainer page with an option to register or login at the bottom - maybe use modal?
-    
-
+            
+    console.log('authenticated', authenticated)
     if (!authenticated) {
-        // Instead of redirecting, render LoginComponent and RegisterComponent
-        // This could be a modal, a separate section, or however you prefer to design it
+        // Instead of redirecting, render LoginComponent and RegisterComponent        
         return (
             <>
                 <HeaderNavigationBar />
                 <div className="flex flex-col bg-secondary/30 items-center justify-center min-h-screen py-12">
-                    <LoginForm />
-                    {/* <RegisterComponent /> */}
+                    <LoginForm />                    
                 </div>
             </>
         );
     }
+
+    
 
 
     // Adding a new testdfd
 
     return (
         <>
-            <section className='flex flex-col bg-base-100'>
+            <section className='flex flex-col w-full bg-base-100'>
                 {/* Top div */}
                 <HeaderNavigationBar />
 
@@ -277,7 +287,7 @@ const IndexPage: React.FC = ({  }) => {
 
                 </div>
                 {/* Generic paragraph */}
-                <section className="w-full h-full m-4 p-4">
+                <section className="self-center w-full h-full m-4 p-4">
                     {renderSelectedView()}
                     
                 </section>
@@ -289,25 +299,20 @@ const IndexPage: React.FC = ({  }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     try {
-        // Get the token from the request
-        console.log('context', context.req.cookies['authToken'])
-        const token = context.req.cookies['authToken'];
+        // Get the token from the request        
+        const token = context.req.cookies['authToken'];        
         
         // Check if the token is undefined or a string
         if (typeof token !== 'string') {
             // Handle the case where the token is missing or invalid
             // For example, redirect to a login page or return an unauthorized status
             return {
-                props: { authenticated: false },
-                // Optionally, you could add a redirect here if you prefer
-                // redirect: {
-                //     destination: '/login',
-                //     permanent: false,
-                // },
+                props: { authenticated: false },                
             };
         }
 
         await firebaseAdmin.auth().verifyIdToken(token);
+        // If the token is valid, return authenticated: true
         return { props: { authenticated: true } };
     } catch (error) {
         // Redirecting or handling the error based on your application's needs
