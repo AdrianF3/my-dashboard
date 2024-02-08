@@ -14,6 +14,7 @@ import { TbLayoutDashboard } from "react-icons/tb";
 import { LuListTodo } from "react-icons/lu";
 import { MdOutlineLibraryAdd } from "react-icons/md";
 import LoginForm from '@/components/Home/DashboardGridComponents/LoginForm';
+import RecipesDisplay from '@/components/Home/RecipeView/RecipesDisplay';
 
 interface IndexPageProps {
     authenticated: boolean;
@@ -27,6 +28,7 @@ const IndexPage: React.FC = ({  }) => {
     // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, activity-tracking, budget, profile-settings
     const [currentView, setCurrentView] = React.useState<string>("dashboard");
     const { profile, loading, error } = useUserProfile(profileUID);
+    console.log('profile', profile)
     const [ theme, setTheme ] = React.useState('nord');
     const listOfThemes = [
         "light",
@@ -118,10 +120,7 @@ const IndexPage: React.FC = ({  }) => {
                 );
             case "recipes":
                 return (
-                    <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
-                        <CgList />
-                        <p className="text-primary-content font-bold text-lg">Recipes</p>
-                    </div>
+                    profile ? <RecipesDisplay recipes={profile.recipes}  /> : null
                 );
             case "bookmarks":
                 return (

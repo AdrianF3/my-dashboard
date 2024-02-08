@@ -5,4 +5,6 @@ export interface Recipe {
     name: string;
     pdfRecipeURL: string;
     recipeURL: string;    
+    ownerUID: string;
+    
 }
