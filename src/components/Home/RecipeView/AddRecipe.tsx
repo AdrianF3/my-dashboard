@@ -1,142 +1,124 @@
-import React, { useState, useRef, ChangeEvent } from 'react';
-import { db, storage, auth } from '../../../firebaseConfig'
+import React, { useState, useRef } from 'react';
+import { db, storage, auth } from '../../../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { Recipe } from '../../../types/Recipe.types';
 import { v4 as uuidv4 } from 'uuid';
 
-// Props type definition
 interface AddRecipeProps {
-  currentRecipes: Recipe[];
-  category: string;
-  setIsLoading: (isLoading: boolean) => void;
+  category: string;  
+  closeModal: () => void;  
 }
 
-export default function AddRecipe({ currentRecipes, category, setIsLoading }: AddRecipeProps) {
+const AddRecipe: React.FC<AddRecipeProps> = ({ category, closeModal }) => {
   const [name, setName] = useState<string>('');
   const [note, setNote] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [recipeURL, setRecipeURL] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = () => {
-    fileInputRef.current?.click();
+  const handleFileUploadClick = () => fileInputRef.current?.click();
+
+  const uploadFile = async (file: File, path: string) => {
+    const storageRef = ref(storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    return getDownloadURL(snapshot.ref);
   };
 
-  const saveRecipe = async (e: ChangeEvent<HTMLInputElement>) => {
+  const saveRecipe = async () => {
     setIsLoading(true);
-    const file = e.target.files?.[0];
-
+    const file = fileInputRef.current?.files?.[0];
     if (!file) {
       setIsLoading(false);
-      return; // No file selected
+      return; // Ensure a file is selected
     }
 
-    const storageRef = ref(storage, `Recipes/${auth.currentUser?.uid}/${file.name}`);
-    
-    try {
-      // Upload the file to storage
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadUrl = await getDownloadURL(snapshot.ref);
+    const uid = auth.currentUser?.uid;
+    if (!uid) {
+      setIsLoading(false);
+      return; // Ensure user is logged in
+    }
 
+    try {
+      const pdfDownloadUrl = await uploadFile(file, `Recipes/${uid}/${file.name}`);
+      
       const newRecipe: Recipe = {
         id: uuidv4(),
         name,
-        recipeURL,
         description: note,
         category,
-        pdfRecipeURL: downloadUrl,
-        ownerUID: auth.currentUser?.uid || '',
+        pdfRecipeURL: pdfDownloadUrl,
+        recipeURL,
+        ownerUID: uid,
       };
-
-    // Get the user's UID
-    const uid = auth.currentUser?.uid;
-
-    // Check if the user's UID exists
-    if (uid) {
-        // Get the user's document reference
-        const userDocRef = doc(db, 'userProfiles', uid);
-
-        try {
-            // Get the user's document data
-            const userDocSnap = await getDoc(userDocRef);
-
-            if (userDocSnap.exists()) {
-                // Get the current recipes array
-                const currentRecipes = userDocSnap.data()?.recipes || [];
-
-                // Add the new recipe to the current recipes array
-                const updatedRecipes = [...currentRecipes, newRecipe];
-
-                // Update the user's document with the updated recipes array
-                await updateDoc(userDocRef, {
-                    recipes: updatedRecipes,
-                });
-            }
-        } catch (error) {
-            console.error('Error updating user profile:', error);
-            setIsLoading(false);
-        }
-    }
-      // Update Firestore with the newRecipe
-      const docRef = doc(db, 'recipeData', 'bgkIgbYG78vAPtCLDkUB');
-      await updateDoc(docRef, {
-        recipes: [...currentRecipes, newRecipe],
+      console.log('newRecipe', newRecipe)
+      const userDocRef = doc(db, 'userProfile', uid);
+      await updateDoc(userDocRef, {
+        recipes: arrayUnion(newRecipe),
       });
 
-      // Clear the input fields
+      // Reset form fields
       setName('');
       setNote('');
-      setRecipeURL('');      
-      setIsLoading(false);
+      setRecipeURL('');
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
       console.error('Error uploading file and updating Firestore:', error);
+    } finally {
       setIsLoading(false);
+      closeModal();
     }
   };
 
   return (
-    <>
-      <div>
-        <h2 className="text-2xl font-bold text-center text-slate-700">Save A New Recipe</h2>
-        <p className="text-center text-slate-700 text-lg">recipes will be saved to the current category that is selected</p>
-        <div className="flex flex-col items-center justify-center p-4 gap-4 bg-gray-100 rounded-xl">
-          <input
-            className="w-full p-4 text-2xl font-bold text-center text-slate-700 bg-green-200/50 rounded-xl shadow-xl hover:bg-green-400/50 focus:bg-green-400/50 focus:outline-none"
-            type="text"
-            placeholder="Recipe Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <input
-            className="w-full p-4 text-2xl font-bold text-center text-slate-700 bg-green-200/50 rounded-xl shadow-xl hover:bg-green-400/50 focus:bg-green-400/50 focus:outline-none"
-            type="text"
-            placeholder="Recipe URL"
-            value={recipeURL}
-            onChange={(e) => setRecipeURL(e.target.value)}
-          />
-        <textarea
-            className="w-full p-4 text-2xl font-bold text-center text-slate-700 bg-green-200/50 rounded-xl shadow-xl hover:bg-green-400/50 focus:bg-green-400/50 focus:outline-none"
-            placeholder="My Personal Notes"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-        />
-
-          <input
-            type="file"
-            id="file"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={saveRecipe}
-          />
-
-          <button
-            className="w-full p-4 text-2xl font-bold text-center text-slate-700 bg-sky-200/50 rounded-xl shadow-xl hover:bg-sky-400/50 focus:bg-sky-400/50 focus:outline-none"
-            onClick={handleFileUpload}
-          >
-            Select a PDF to upload
-          </button>
+    <div className="flex flex-col items-center justify-center p-4 gap-4 rounded-xl">
+      <input
+        className="w-full p-4 text-xl text-slate-700 bg-white rounded shadow"
+        placeholder="Recipe Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <span>Selected Category: {category}</span>
+      <input
+        className="w-full p-4 text-xl text-slate-700 bg-white rounded shadow"
+        placeholder="Recipe URL"
+        value={recipeURL}
+        onChange={(e) => setRecipeURL(e.target.value)}
+      />
+      <textarea
+        className="w-full p-4 text-xl text-slate-700 bg-white rounded shadow"
+        placeholder="Notes"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+      />
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={() => {}}
+      />
+      <button
+        className="px-4 py-2 text-xl text-white bg-blue-500 rounded hover:bg-blue-600"
+        onClick={handleFileUploadClick}
+      >
+        Select PDF
+      </button>
+      {fileInputRef.current?.files?.[0] ? (
+        <div>
+          <p>Selected PDF: {fileInputRef.current.files[0].name}</p>
+          <p>File Size: {fileInputRef.current.files[0].size} bytes</p>
         </div>
-      </div>
-    </>
+      ) : null}
+      {isLoading ? <p>Uploading Recipe...</p> : <>
+      <button
+        className="px-4 py-2 text-xl text-white bg-green-500 rounded hover:bg-green-600"
+        onClick={saveRecipe}
+      >
+        Upload Recipe
+      </button>
+      </>}
+    </div>
   );
-}
+};
+
+export default AddRecipe;

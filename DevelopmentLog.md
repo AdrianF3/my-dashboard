@@ -22,6 +22,7 @@ Building simple, helpful tools to help manage life.
 - Mini Commit - testing a new deployment after a few changes - this has caused problems
 - **Fixed** - The many issues with Github by deleting the local project, copying the recent changes and reinitializing the project
 - Working on the loading of and display of recipeData - continued to build out recipe functionality
+- Rounded out iniital implementation of the the recipe functiality, editing and deleting recipes is live and working
 
 
 

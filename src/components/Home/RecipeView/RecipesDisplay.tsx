@@ -15,7 +15,7 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
     const recipeCategories = ['Untried', 'Breakfast', 'Main Course', 'Desserts', 'Drinks', 'Sides/Misc.', 'Soups', 'Salads', 'Snacks', 'Breads'];
     const [currentCategory, setCurrentCategory] = useState('Untried');
     const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    
 
     useEffect(() => {
             console.log('recipeData', recipes)
@@ -28,6 +28,10 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
             }
         }, [currentCategory, recipes]);
 
+        function closeModal() {
+            (document.getElementById('my_modal_1') as HTMLDialogElement)?.close();
+          }
+          
     
 
     return (
@@ -45,11 +49,9 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
                 </button>
                 <dialog id="my_modal_1" className="modal">
                 <div className="modal-box">                    
-                    <AddRecipe
-                        currentRecipes={recipes}
-                        category={currentCategory}
-                        setIsLoading={setIsLoading}
-            
+                    <AddRecipe                        
+                        category={currentCategory}                        
+                        closeModal={closeModal}                        
                     />
                 </div>
                 </dialog>
@@ -83,7 +85,8 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
                     <RecipeCard
                       key={index}
                       index={index}
-                      recipe={recipe}                      
+                      recipe={recipe}     
+                      recipeCategories={recipeCategories}                 
                     />                  
                   ))
                 : null}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { projectFirestore } from '../../../firebaseConfig'
+import { db } from '../../../firebaseConfig'
 import { doc, updateDoc } from 'firebase/firestore';
 
 // Assuming the shape of a recipe for TypeScript typing. Adjust according to your actual data structure.
@@ -58,11 +58,11 @@ export default function EditRecipe({
         recipeURL,
         description: note,
         category,
-        pdfRecipeUrl: editingRecipe.pdfRecipeUrl,
+        pdfRecipeUrl: editingRecipe.pdfRecipeURL,
       };
 
       // Update Firestore with the newRecipe
-      const docRef = doc(projectFirestore, 'recipeData', 'bgkIgbYG78vAPtCLDkUB');
+      const docRef = doc(db, 'recipeData', 'bgkIgbYG78vAPtCLDkUB');
       await updateDoc(docRef, {
         recipes: [...filteredRecipes, newRecipe],
       });

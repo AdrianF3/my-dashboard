@@ -170,6 +170,33 @@ const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
                             <p>Day { dateData.dayOfTheYear + ' | ' + dateData.currentYear }</p>
                         </div>
                     </div>
+                    {/* Temp Text Section */}
+                    <div className='flex flex-col sm:w-full md:w-1/3'>   
+                        <h2 className="text-3xl">Progress Equals</h2>
+                        <ul>
+                            <li>job applications</li>
+                            <li>healthy eating</li>
+                            <li>healthy spending</li>
+                            <li>working out</li>
+                            <li>Development & learning</li>
+                            <li>better sleep and consistent schedule</li>
+                        </ul>
+                        <h2 className="text-3xl">Relaxation equals</h2>                        
+                        <ul>
+                            <li>pc or ps4 gaming</li>
+                            <li>movies & tv show</li>
+                            <li>social</li>
+                            <li>cooking</li>
+                            <li>hobbies</li>
+                            <li>socializing</li>
+                        </ul>
+                        <h2 className="text-3xl">Opposite of Progress</h2>
+                        <ul>
+                            <li>smoking all day</li>
+                            <li>binge eating</li>
+                            <li>comfort eating</li>                            
+                        </ul>
+                    </div>
                     {/* Weather Section */}
                     <div className={`${backgroundClass} text-center p-2 h-fit rounded-xl shadow-primary-content shadow-md sm:w-full md:w-1/3`}>
                         {weatherData ? (
