@@ -1,91 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { GrNotes } from 'react-icons/gr';
-import { Recipe } from '../../../types/Recipe.types'; // Assuming you have a type definition for Recipe
-import { deleteRecipe } from './utils/deleteRecipe'; // Assuming you have a function to delete a recipe
-import { updateRecipe } from './utils/updateRecipe'; // Assuming you have a function to update a recipe
+import { Recipe } from '../../../types/Recipe.types';
+import { updateRecipe } from './utils/updateRecipe'; // Simplified imports assuming these functions are exported from the utils/index.ts
+import { deleteRecipe } from './utils/deleteRecipe'; // Simplified imports assuming these functions are exported from the utils/index.ts
 
 interface RecipeCardProps {
-    index: number;
-    recipe: Recipe;
-    recipeCategories: string[]; // New prop for the categories
+  index: number;
+  recipe: Recipe;
+  recipeCategories: string[];
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ index, recipe, recipeCategories }) => {
-    const [editingRecipe, setEditingRecipe] = useState(false); // Changed to boolean to toggle edit mode
-    const [editedRecipe, setEditedRecipe] = useState(recipe); // State to hold edited recipe changes
-    const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+  const [editingRecipe, setEditingRecipe] = useState(false);
+  const [editedRecipe, setEditedRecipe] = useState(recipe);
+  const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setEditedRecipe({ ...editedRecipe, [e.target.name]: e.target.value });
-    };
+  const handleEditChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setEditedRecipe(prev => ({ ...prev, [name]: value }));
+  };
 
-    const saveEdits = () => {
-        // Function to save edits to Firestore or local state
-        setIsLoading(true);
-        console.log('editedRecipe', editedRecipe)
-        updateRecipe(editedRecipe); 
-        setIsLoading(false);
-        setEditingRecipe(false); // Exit editing mode
-        // Add your update logic here
-    };
+  const saveEdits = async () => {
+    setIsLoading(true);
+    try {
+      await updateRecipe(editedRecipe);
+      // Optionally, handle any post-update actions here
+    } catch (error) {
+      console.error('Failed to update recipe:', error);
+      // Handle update error (e.g., show a notification to the user)
+    } finally {
+      setIsLoading(false);
+      setEditingRecipe(false);
+    }
+  };
 
-    return ( <>
-        <div key={index} className="flex flex-col items-center justify-center w-full p-4 gap-4 bg-primary text-primary-content border-2 border-black border-dashed rounded-xl">
-            {editingRecipe ? (
-                <>
-                    <label htmlFor="name">Name</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={editedRecipe.name}
-                        onChange={handleEditChange}
-                        className="input input-bordered w-full max-w-xs"
-                    />
-                    <label htmlFor="recipeURL">Recipe&apos;s URL</label>
-                    <input
-                        type="text"
-                        name="recipeURL"
-                        value={editedRecipe.recipeURL}
-                        onChange={handleEditChange}
-                        className="input input-bordered w-full max-w-xs primary-content"
-                    />
-                    <label htmlFor="category">Select a Category</label>
-                    <select
-                        name="category"
-                        value={editedRecipe.category}
-                        onChange={handleEditChange}
-                        className="select select-bordered w-full max-w-xs"
-                    >
-                        {recipeCategories.map((category) => (
-                            <option key={category} value={category}>
-                                {category}
-                            </option>
-                        ))}
-                    </select>
-                    <label htmlFor="description">Description</label>
-                    <textarea
-                        name="description"
-                        value={editedRecipe.description}
-                        onChange={handleEditChange}
-                        className="textarea textarea-bordered w-full max-w-xs"
-                    />
-
-                    { isLoading ? <p>Uploading Recipe...</p> : <>
-                        <button
-                            className="btn btn-success mt-4"
-                            onClick={saveEdits}
-                            >Save Changes
-                        </button>
-                    </>}
-                    <button
-                        className="btn btn-error mt-4"
-                        onClick={() => setEditingRecipe(false)}
-                    >Cancel
-                    </button>
-
-                </>
-            ) : (
+  return (
+    <div key={index} className="flex flex-col items-center justify-center w-full p-4 gap-4 bg-primary text-primary-content border-2 border-black border-dashed rounded-xl">
+      {editingRecipe ? (
+        <>
+          <input type="text" name="name" value={editedRecipe.name} onChange={handleEditChange} className="input input-bordered w-full max-w-xs" />
+          <input type="text" name="recipeURL" value={editedRecipe.recipeURL} onChange={handleEditChange} className="input input-bordered w-full max-w-xs" />
+          <select name="category" value={editedRecipe.category} onChange={handleEditChange} className="select select-bordered w-full max-w-xs">
+            {recipeCategories.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+          <textarea name="description" value={editedRecipe.description} onChange={handleEditChange} className="textarea textarea-bordered w-full max-w-xs" />
+          {isLoading ? <p>Updating Recipe...</p> : <button onClick={saveEdits} className="btn btn-success mt-4">Save Changes</button>}
+          <button onClick={() => setEditingRecipe(false)} className="btn btn-error mt-4">Cancel</button>
+        </>
+      ) : (
                 <>
                 <div key={index} className="flex flex-col items-center justify-center w-full p-4 gap-4 bg-gray-100 border-2 border-black border-dashed rounded-xl">
                     <h3 className="text-2xl font-bold text-center text-slate-700">{recipe.name}</h3>
@@ -132,8 +97,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ index, recipe, recipeCategories
                 </div>
                 </>
             )}
-            </div>
-            </>
+            </div>            
     );
 }
 
