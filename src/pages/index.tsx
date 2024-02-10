@@ -24,11 +24,9 @@ const IndexPage: React.FC = ({  }) => {
     const { user, loading: authLoading, logout } = useAuth();
     const [ profileUID, setProfileUID ] = useState<any>(null);
     const authenticated = !!user;
-    
     // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, activity-tracking, budget, profile-settings
-    const [currentView, setCurrentView] = React.useState<string>("recipes");
-    const { profile, loading, error } = useUserProfile(profileUID);
-    console.log('profile', profile)
+    const [currentView, setCurrentView] = React.useState<string>("dashboard");
+    const { profile, loading, error } = useUserProfile(profileUID);    
     const [ theme, setTheme ] = React.useState('nord');
     const listOfThemes = [
         "light",
@@ -65,19 +63,22 @@ const IndexPage: React.FC = ({  }) => {
         "sunset",
       ];
 
+    // Set the theme on initial load
     React.useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
       }, [theme]);
 
+    // Set the theme in the profile if it exists
     React.useEffect(() => {
         if (profile) {
             setTheme(profile.theme);            
         }
     }, [profile]);
     
-    const toggleTheme = (theme: string) => {
-    setTheme(theme);
-    };    
+    // Function to toggle the theme
+    // const toggleTheme = (theme: string) => {
+    // setTheme(theme);
+    // };    
 
     React.useEffect(() => {
         console.log('user', user)                                    
@@ -169,7 +170,7 @@ const IndexPage: React.FC = ({  }) => {
                             <select 
                                 className="select select-primary text-accent-content w-full max-w-xs"
                                 value={theme}
-                                onChange={(e) => toggleTheme(e.target.value)}
+                                onChange={(e) => setTheme(e.target.value)}
                             >                                
                                 {listOfThemes.map((theme) => (
                                 <option key={theme} value={theme}>

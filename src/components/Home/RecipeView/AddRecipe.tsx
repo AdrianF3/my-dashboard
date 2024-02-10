@@ -71,22 +71,23 @@ const AddRecipe: React.FC<AddRecipeProps> = ({ category, closeModal }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 gap-4 rounded-xl">
+    <div className="flex flex-col bg-primary items-center justify-center p-4 gap-4 rounded-xl">
+      <h1 className="text-4xl text-primary-content">New Recipe</h1>
+      <p className="w-full p-2 text-xl text-primary-content">Category: {category}</p>
       <input
-        className="w-full p-4 text-xl text-slate-700 bg-white rounded shadow"
+        className="w-full p-4 text-xl text-primary-content"
         placeholder="Recipe Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <span>Selected Category: {category}</span>
       <input
-        className="w-full p-4 text-xl text-slate-700 bg-white rounded shadow"
+        className="w-full p-4 text-xl text-primary-content"
         placeholder="Recipe URL"
         value={recipeURL}
         onChange={(e) => setRecipeURL(e.target.value)}
       />
       <textarea
-        className="w-full p-4 text-xl text-slate-700 bg-white rounded shadow"
+        className="w-full p-4 text-xl text-primary-content"
         placeholder="Notes"
         value={note}
         onChange={(e) => setNote(e.target.value)}
@@ -97,26 +98,36 @@ const AddRecipe: React.FC<AddRecipeProps> = ({ category, closeModal }) => {
         className="hidden"
         onChange={() => {}}
       />
-      <button
-        className="px-4 py-2 text-xl text-white bg-blue-500 rounded hover:bg-blue-600"
-        onClick={handleFileUploadClick}
-      >
-        Select PDF
-      </button>
-      {fileInputRef.current?.files?.[0] ? (
-        <div>
-          <p>Selected PDF: {fileInputRef.current.files[0].name}</p>
-          <p>File Size: {fileInputRef.current.files[0].size} bytes</p>
-        </div>
-      ) : null}
-      {isLoading ? <p>Uploading Recipe...</p> : <>
-      <button
-        className="px-4 py-2 text-xl text-white bg-green-500 rounded hover:bg-green-600"
-        onClick={saveRecipe}
-      >
-        Upload Recipe
-      </button>
-      </>}
+      <div className='flex flex-wrap gap-2'>
+        <button
+          className="px-4 py-2 text-xl text-white bg-blue-500 rounded hover:bg-blue-600"
+          onClick={handleFileUploadClick}
+        >
+          Select PDF
+        </button>
+        {fileInputRef.current?.files?.[0] ? (
+          <div>
+            <p>Selected PDF: {fileInputRef.current.files[0].name}</p>
+            <p>File Size: {fileInputRef.current.files[0].size} bytes</p>
+          </div>
+        ) : null}
+        {isLoading ? <p>Uploading Recipe...</p> : <>
+        <button
+          className="px-4 py-2 text-xl text-white bg-green-500 rounded hover:bg-green-600"
+          onClick={saveRecipe}
+        >
+          Upload Recipe
+        </button>
+        </>}
+        <button
+          className="px-4 py-2 text-xl text-white bg-red-500 rounded hover:bg-red-600"
+          onClick={closeModal}
+        >
+          Cancel
+        </button>
+
+      </div>
+
     </div>
   );
 };

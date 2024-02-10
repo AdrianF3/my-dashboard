@@ -12,9 +12,23 @@ interface RecipesDisplayProps {
 }
 
 const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
-    const recipeCategories = ['Untried', 'Breakfast', 'Main Course', 'Desserts', 'Drinks', 'Sides/Misc.', 'Soups', 'Salads', 'Snacks', 'Breads'];
+    const recipeCategories = React.useMemo(() => ['Untried', 'Breakfast', 'Main Course', 'Desserts', 'Drinks', 'Sides/Misc.', 'Soups', 'Salads', 'Snacks', 'Breads'], []);
     const [currentCategory, setCurrentCategory] = useState('Untried');
     const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
+    const [recipeCounts, setRecipeCounts] = useState<Record<string, number>>({});
+    console.log('recipeCounts', recipeCounts)
+
+    useEffect(() => {
+        if (recipes) {
+            const tempRecipeCounts: Record<string, number> = {};
+            recipeCategories.forEach((category) => {
+                tempRecipeCounts[category] = recipes.filter((recipe) => recipe.category === category).length;
+            });
+            setRecipeCounts(tempRecipeCounts);
+        }
+    }, [recipes, recipeCategories]);
+
+    
     
 
     useEffect(() => {
@@ -39,12 +53,13 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
         {/* // Display the categories */}
         <div className='bg-primary text-primary-content rounded-xl p-4'>
             {/*  */}
-            <div className='flex sm:flex-col md:flex-row justify-center'>
-                <p className='self-center'>This is how you can save pdfs of your favortie recipes</p>                            
+            <div className='flex flex-col justify-center text-center'>
+                <h1 className='text-4xl'>Recipes</h1>
+                <p className='py-4 text-xl'>Save pdfs of your favortie recipes</p>                            
             </div>
             <div className='flex sm:flex-col md:flex-row justify-center'>
                 {/* Open the modal using document.getElementById('ID').showModal() method */}
-                <button className="btn" onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement)?.showModal()}>
+                <button className="btn btn-secondary" onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement)?.showModal()}>
                     Add New Recipe
                 </button>
                 <dialog id="my_modal_1" className="modal">
@@ -68,7 +83,7 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
                         onClick={() => setCurrentCategory(category)}
                         className={`${category === currentCategory ? 'bg-accent' : 'bg-secondary'} p-2 m-2 rounded-md cursor-pointer hover:bg-blue-300 transition duration-300 ease-in-out`}
                     >
-                        {category}
+                        {category} - <span className='font-bold'>{recipeCounts[category]}</span> recipes
                     </li>
                 ))}
             </ul>
