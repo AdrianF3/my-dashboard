@@ -23,7 +23,8 @@ Building simple, helpful tools to help manage life.
 - **Fixed** - The many issues with Github by deleting the local project, copying the recent changes and reinitializing the project
 - Working on the loading of and display of recipeData - continued to build out recipe functionality
 - Rounded out iniital implementation of the the recipe functiality, editing and deleting recipes is live and working
-- Finishing the finer points of the recipe management and display, including the ability to add and delete recipes
+- Finishing the finer points of the recipe management and display, including the ability to add and delete recipes - continued
+
 
 
 

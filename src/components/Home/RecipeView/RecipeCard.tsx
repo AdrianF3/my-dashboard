@@ -35,6 +35,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ index, recipe, recipeCategories
     }
   };
 
+  React.useEffect(() => {
+    setEditedRecipe(recipe);
+  }, [recipe]);
+  console.log('recipe', recipe)
+  console.log('editedRecipe', editedRecipe)
+  
   return (
     <div key={index} className="flex flex-col items-center justify-center w-full p-4 gap-4 bg-primary text-primary-content border-2 border-black border-dashed rounded-xl">
       {editingRecipe ? (

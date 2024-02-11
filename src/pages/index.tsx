@@ -80,8 +80,7 @@ const IndexPage: React.FC = ({  }) => {
     // setTheme(theme);
     // };    
 
-    React.useEffect(() => {
-        console.log('user', user)                                    
+    React.useEffect(() => {                               
         if (user && user.uid) {
             setProfileUID(user.uid);
         }
@@ -117,7 +116,7 @@ const IndexPage: React.FC = ({  }) => {
         switch (currentView) {
             case "dashboard":
                 return (
-                    <Dashboard profile={profile} />
+                    <Dashboard profile={profile} user={user} />
                 );
             case "recipes":
                 return (

@@ -5,6 +5,7 @@ import { FaSun, FaCloud, FaCloudRain, FaSnowflake, FaPooStorm } from 'react-icon
 import { GiRaining } from "react-icons/gi";
 import './DashboardStyles.css';
 
+
 const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
     const [weatherData, setWeatherData] = useState<any>(null);
   

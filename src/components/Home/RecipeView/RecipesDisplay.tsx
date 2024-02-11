@@ -15,8 +15,7 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
     const recipeCategories = React.useMemo(() => ['Untried', 'Breakfast', 'Main Course', 'Desserts', 'Drinks', 'Sides/Misc.', 'Soups', 'Salads', 'Snacks', 'Breads'], []);
     const [currentCategory, setCurrentCategory] = useState('Untried');
     const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
-    const [recipeCounts, setRecipeCounts] = useState<Record<string, number>>({});
-    console.log('recipeCounts', recipeCounts)
+    const [recipeCounts, setRecipeCounts] = useState<Record<string, number>>({});    
 
     useEffect(() => {
         if (recipes) {
@@ -31,14 +30,12 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
     
     
 
-    useEffect(() => {
-            console.log('recipeData', recipes)
-            if (recipes) {
-                console.log('run')
+    useEffect(() => {            
+            if (recipes) {                
                 const tempFilteredRecipes = recipes.filter((recipe) => recipe.category === currentCategory);
             setFilteredRecipes(tempFilteredRecipes);
             } else {
-                console.log('not run')
+                setFilteredRecipes([]);                
             }
         }, [currentCategory, recipes]);
 
@@ -46,7 +43,7 @@ const RecipesDisplay: React.FC<RecipesDisplayProps> = ({ recipes }) => {
             (document.getElementById('my_modal_1') as HTMLDialogElement)?.close();
           }
           
-    
+          console.log('filteredRecipes', filteredRecipes)
 
     return (
         <>

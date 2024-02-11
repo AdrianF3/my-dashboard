@@ -1,12 +1,12 @@
 import React from 'react';
 import  Link from 'next/link';
-import { CgHomeAlt, CgProfile, CgLogIn } from 'react-icons/cg';
+import { CgHomeAlt, CgLogIn } from 'react-icons/cg';
 import { getAuth, signOut } from "firebase/auth";
 
 const HeaderNavigationBar: React.FC = () => {
 
+    const auth = getAuth();    
     const handleLogout = async () => {
-        const auth = getAuth();
         await signOut(auth);
         // Handle logout
     };
@@ -24,12 +24,15 @@ const HeaderNavigationBar: React.FC = () => {
                     </div>       
                     </Link>
                 </button>                
-                <button className="btn btn-outline btn-content text-primary-content" onClick={handleLogout}>
-                    <div className='flex flex-col justify-center items-center'> 
-                        <CgLogIn />
-                        Logout
-                    </div>                    
-                </button>
+
+                { !auth.currentUser ? null : <>
+                    <button className="btn btn-outline btn-content text-primary-content" onClick={handleLogout}>
+                        <div className='flex flex-col justify-center items-center'> 
+                            <CgLogIn />
+                            Logout
+                        </div>                    
+                    </button>
+                </> }
             </div>
         </div>
     );

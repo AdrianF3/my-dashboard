@@ -15,6 +15,7 @@ const AddRecipe: React.FC<AddRecipeProps> = ({ category, closeModal }) => {
   const [note, setNote] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [recipeURL, setRecipeURL] = useState<string>('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUploadClick = () => fileInputRef.current?.click();
@@ -23,6 +24,11 @@ const AddRecipe: React.FC<AddRecipeProps> = ({ category, closeModal }) => {
     const storageRef = ref(storage, path);
     const snapshot = await uploadBytes(storageRef, file);
     return getDownloadURL(snapshot.ref);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setSelectedFile(file);
   };
 
   const saveRecipe = async () => {
@@ -96,38 +102,39 @@ const AddRecipe: React.FC<AddRecipeProps> = ({ category, closeModal }) => {
         type="file"
         ref={fileInputRef}
         className="hidden"
-        onChange={() => {}}
+        onChange={handleFileChange}
       />
-      <div className='flex flex-wrap gap-2'>
-        <button
-          className="px-4 py-2 text-xl text-white bg-blue-500 rounded hover:bg-blue-600"
-          onClick={handleFileUploadClick}
-        >
-          Select PDF
-        </button>
-        {fileInputRef.current?.files?.[0] ? (
-          <div>
-            <p>Selected PDF: {fileInputRef.current.files[0].name}</p>
-            <p>File Size: {fileInputRef.current.files[0].size} bytes</p>
+      <div className='flex flex-wrap justify-center text-center gap-2'>
+        {!selectedFile ? (
+          <button
+            className="px-4 py-2 text-xl text-white bg-blue-500 rounded hover:bg-blue-600"
+            onClick={handleFileUploadClick}
+          >
+            Select PDF
+          </button>
+        ) : (
+          <div className='flex flex-col justify-center text-center'>
+            <p>Selected PDF: {selectedFile.name}</p>
+            <p>File Size: {selectedFile.size} bytes</p>
+            {isLoading ? (
+              <p>Uploading Recipe...</p>
+            ) : (
+              <button
+                className="px-4 py-2 text-xl text-white bg-green-500 rounded hover:bg-green-600"
+                onClick={saveRecipe}
+              >
+                Upload Recipe
+              </button>
+            )}
           </div>
-        ) : null}
-        {isLoading ? <p>Uploading Recipe...</p> : <>
-        <button
-          className="px-4 py-2 text-xl text-white bg-green-500 rounded hover:bg-green-600"
-          onClick={saveRecipe}
-        >
-          Upload Recipe
-        </button>
-        </>}
+        )}
         <button
           className="px-4 py-2 text-xl text-white bg-red-500 rounded hover:bg-red-600"
           onClick={closeModal}
         >
           Cancel
         </button>
-
       </div>
-
     </div>
   );
 };
