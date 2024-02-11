@@ -16,6 +16,13 @@
   }
 }
 
+html,
+body {
+  min-height: 100%; /* Ensure a minimum height of 100% for smaller screens */
+  margin: 0;
+  padding: 0;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -24,6 +31,8 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  display: flex;
+  flex-direction: column; /* Allow content to expand vertically */
 }
 
 @layer utilities {
