@@ -38,7 +38,7 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
         // Add your logic here to send the new habit to your backend
         // For demonstration, we're just logging the new habit
         console.log({
-            userId: profile?.userId, // Assuming your profile object has a userId field
+            userId: profile?.id, // Assuming your profile object has a userId field
             habitTitle,
             goalNumber,
             frequency,
