@@ -27,9 +27,10 @@ const AddRecipe: React.FC<AddRecipeProps> = ({ category, closeModal }) => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0] ?? null; // Fallback to null if file is undefined
     setSelectedFile(file);
-  };
+};
+
 
   const saveRecipe = async () => {
     setIsLoading(true);

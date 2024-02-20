@@ -15,6 +15,7 @@ import { LuListTodo } from "react-icons/lu";
 import { MdOutlineLibraryAdd } from "react-icons/md";
 import LoginForm from '@/components/Home/DashboardGridComponents/LoginForm';
 import RecipesDisplay from '@/components/Home/RecipeView/RecipesDisplay';
+import HabitTracking from '@/components/Home/DashboardGridComponents/HabitTracking';
 
 interface IndexPageProps {
     authenticated: boolean;
@@ -24,8 +25,8 @@ const IndexPage: React.FC = ({  }) => {
     const { user, loading: authLoading, logout } = useAuth();
     const [ profileUID, setProfileUID ] = useState<any>(null);
     const authenticated = !!user;
-    // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, activity-tracking, budget, profile-settings
-    const [currentView, setCurrentView] = React.useState<string>("dashboard");
+    // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, habit-tracking, budget, profile-settings
+    const [currentView, setCurrentView] = React.useState<string>("habit-tracking");
     const { profile, loading, error } = useUserProfile(profileUID);    
     const [ theme, setTheme ] = React.useState('nord');
     const listOfThemes = [
@@ -116,7 +117,7 @@ const IndexPage: React.FC = ({  }) => {
         switch (currentView) {
             case "dashboard":
                 return (
-                    <Dashboard profile={profile} user={user} />
+                    <Dashboard profile={profile} />
                 );
             case "recipes":
                 return (
@@ -143,12 +144,9 @@ const IndexPage: React.FC = ({  }) => {
                         <p className="text-primary-content font-bold text-lg">To Do*</p>
                     </div>
                 );
-            case "activity-tracking":
+            case "habit-tracking":
                 return (
-                    <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
-                        <MdOutlineLibraryAdd />
-                        <p className="text-primary-content font-bold text-lg">Activity Tracking*</p>
-                    </div>
+                    <HabitTracking profile={profile} />
                 );
             case "budget":
                 return (
@@ -224,10 +222,10 @@ const IndexPage: React.FC = ({  }) => {
                         <CgBookmark />
                         <p className="text-primary-content font-bold text-lg">Bookmarks*</p>
                     </div>
-                    {/* Activity Tracking */}
-                    <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('activity-tracking')}>
+                    {/* Habit Tracking */}
+                    <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('habit-tracking')}>
                         <MdOutlineLibraryAdd />
-                        <p className="text-primary-content font-bold text-lg">Activity Tracking*</p>
+                        <p className="text-primary-content font-bold text-lg">Habit Tracking*</p>
                     </div>
                     {/* Important Dates */}
                     <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('important-dates')}>

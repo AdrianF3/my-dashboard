@@ -24,6 +24,7 @@ Building simple, helpful tools to help manage life.
 - Working on the loading of and display of recipeData - continued to build out recipe functionality
 - Rounded out iniital implementation of the the recipe functiality, editing and deleting recipes is live and working
 - Finishing the finer points of the recipe management and display, including the ability to add and delete recipes - continued
+- Beginning work to implement habit tracking and display
 
 
 
