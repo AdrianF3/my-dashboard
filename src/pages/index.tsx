@@ -26,7 +26,7 @@ const IndexPage: React.FC = ({  }) => {
     const [ profileUID, setProfileUID ] = useState<any>(null);
     const authenticated = !!user;
     // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, habit-tracking, budget, profile-settings
-    const [currentView, setCurrentView] = React.useState<string>("habit-tracking");
+    const [currentView, setCurrentView] = React.useState<string>("dashboard");
     const { profile, loading, error } = useUserProfile(profileUID);    
     const [ theme, setTheme ] = React.useState('nord');
     const listOfThemes = [
@@ -217,15 +217,15 @@ const IndexPage: React.FC = ({  }) => {
                         <CgList />
                         <p className="text-primary-content font-bold text-lg">Recipes</p>
                     </div>
-                    {/* Bookmarks */}
-                    <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('bookmarks')}>
-                        <CgBookmark />
-                        <p className="text-primary-content font-bold text-lg">Bookmarks*</p>
-                    </div>
                     {/* Habit Tracking */}
                     <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('habit-tracking')}>
                         <MdOutlineLibraryAdd />
                         <p className="text-primary-content font-bold text-lg">Habit Tracking*</p>
+                    </div>
+                    {/* Bookmarks */}
+                    <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('bookmarks')}>
+                        <CgBookmark />
+                        <p className="text-primary-content font-bold text-lg">Bookmarks*</p>
                     </div>
                     {/* Important Dates */}
                     <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('important-dates')}>
