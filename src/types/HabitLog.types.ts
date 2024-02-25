@@ -1,5 +1,8 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface HabitLog {
-    date: string;
+    dateTime: Timestamp | null;
     count: number;
     note: string;
+    id: string;
   }

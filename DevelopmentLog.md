@@ -8,7 +8,7 @@ Building simple, helpful tools to help manage life.
 ## Current Version 
 
 
-#### Version 0.1.2 - Started 1/23/2024 - Ended ###
+#### Version 0.1.3 - Started 1/23/2024 - Ended ###
 - **Fixed** the issue where the application was not recognizing `src/pages/index.tsx` as the homepage due to incorrect file structure. Moved the file from `src/app/pages/index.tsx` to `src/pages/index.tsx` to align with Next.js conventions.
 - Implemented - DaisyUI and Firebase to begin the backend Integration.
 - Implemented - The beginning of the authenticationUI component
@@ -26,6 +26,7 @@ Building simple, helpful tools to help manage life.
 - Finishing the finer points of the recipe management and display, including the ability to add and delete recipes - continued
 - Beginning work to implement habit tracking and display
 - Finished building out basic habit tracking and display functionality before moving to backend integration
+- Updates to habit tracking, properly displaying and calculating progress and displaying details committing to test data live for bugs
 
 
 

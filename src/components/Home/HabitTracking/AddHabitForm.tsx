@@ -1,5 +1,8 @@
 import { UserProfile } from "@/types/UserProfile.types";
 import React, { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { db } from "../../../firebaseConfig"; // Import your Firebase config
+import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore"; // Firestore methods for adding a new document
 
 interface AddHabitFormProps {
   profile: UserProfile | null;
@@ -11,28 +14,38 @@ const AddHabitForm: React.FC<AddHabitFormProps> = ({ profile }) => {
     const [frequency, setFrequency] = useState('daily');
 
     const addHabit = async () => {
-        if (!habitTitle.trim() || !goalNumber.trim()) return; // Prevent adding habits with empty title or goal
-
-        // Add your logic here to send the new habit to your backend
-        // For demonstration, we're just logging the new habit
-        console.log({
-            userId: profile?.id, // Assuming your profile object has a userId field
-            habitTitle,
-            goalNumber,
+        if (!profile || !habitTitle.trim() || !goalNumber.trim()) return; // Additional check for profile existence
+    
+        const habitData = {
+            id: uuidv4(),
+            title: habitTitle.trim(),
+            goal: parseInt(goalNumber), // Assuming goalNumber should be an integer
+            currentCount: 0, // New habit, so current count is 0
             frequency,
-        });
-
-        // Reset form fields after adding
+            logs: [], // No logs for a new habit
+            beginDateTime: serverTimestamp(), // Current date and time
+        };
+    
+        try {
+          // Reference to the userProfile document
+          const userProfileRef = doc(db, "userProfile", profile.uid);
+          // Reference to the new habit document in the userHabits sub-collection
+          const newHabitRef = doc(collection(userProfileRef, "userHabits"));
+    
+          await setDoc(newHabitRef, habitData);
+          console.log("Habit added successfully:", newHabitRef.id);
+        } catch (error) {
+          console.error("Error adding habit:", error);
+        }
+    
+        resetForm(); // Reset form fields after adding
+      };
+    
+      const resetForm = () => {
         setHabitTitle('');
         setGoalNumber('');
         setFrequency('daily');
-    };
-
-    const resetForm = () => {
-        setHabitTitle('');
-        setGoalNumber('');
-        setFrequency('daily');
-    }   
+      };
   
 
   return (

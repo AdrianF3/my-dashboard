@@ -1,10 +1,11 @@
 import { HabitLog } from "./HabitLog.types";
+import { Timestamp } from "firebase/firestore";
 
 export interface Habit {
-    id: number; // Unique identifier for each habit
+    id: string; // Unique identifier for each habit
     title: string;
-    goal: number;
-    currentCount: number;
+    goal: number;    
+    beginDateTime: Timestamp | null;
     frequency: string;
     logs: HabitLog[];  
   }

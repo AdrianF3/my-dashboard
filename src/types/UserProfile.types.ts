@@ -1,7 +1,7 @@
 import { Recipe } from './Recipe.types';
 
 export interface UserProfile {    
-    id: string;
+    uid: string;
     name: string;
     email: string;
     bio: string;
