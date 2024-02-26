@@ -9,12 +9,14 @@ import HabitDetails from "../HabitTracking/HabitDetails";
 // Modular Firebase v9+ imports
 import { db } from "../../../firebaseConfig";
 import { collection, doc, query, onSnapshot } from "firebase/firestore";
+import EditHabitTrackingForm from "../HabitTracking/EditHabitTrackingForm";
 
-type ViewMode = 'ADD_HABIT' | 'TRACK_HABIT' | 'HABIT_DETAILS';
+type ViewMode = 'ADD_HABIT' | 'TRACK_HABIT' | 'HABIT_DETAILS' | 'EDIT_HABIT_LOG';
 
 const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
     const [currentView, setCurrentView] = useState<ViewMode>('ADD_HABIT');
     const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+    const [ habitLogIDToEdit, setHabitLogIDToEdit ] = useState<string | null>(null);
     const [habits, setHabits] = useState<Habit[]>([]);
 
     useEffect(() => {
@@ -36,6 +38,17 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
         setSelectedHabit(habit);
     };
 
+    const handleEditLog = (view: ViewMode, habit: Habit | null, logID: string | null) => {
+        setCurrentView(view);
+        setSelectedHabit(habit);
+        setHabitLogIDToEdit(logID);
+    }    
+
+    const handleViewDetails = () => {
+        setCurrentView('HABIT_DETAILS');
+    }
+
+
     const viewReset = () => {
         setCurrentView('ADD_HABIT');
         setSelectedHabit(null);
@@ -48,8 +61,9 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
                 <p className="text-md">Track your habits with goals and frequency to monitor your progress and maintain consistency. Set specific objectives for each habit to achieve your personal development goals.</p>
             </div>
             {currentView === 'ADD_HABIT' && <AddHabitForm profile={profile} />}
-            {currentView === 'TRACK_HABIT' && selectedHabit && <HabitTrackingForm profile={profile} habit={selectedHabit} viewReset={viewReset} />}
-            {currentView === 'HABIT_DETAILS' && selectedHabit && <HabitDetails habit={selectedHabit} viewReset={viewReset} />}
+            {currentView === 'TRACK_HABIT' && selectedHabit && <HabitTrackingForm profile={profile} habit={selectedHabit} viewReset={viewReset} handleViewDetails={handleViewDetails} />}
+            {currentView === 'HABIT_DETAILS' && selectedHabit && profile && <HabitDetails habit={selectedHabit} viewReset={viewReset} handleEditLog={handleEditLog} userID={profile.uid} handleViewDetails={handleViewDetails}  />}
+            {currentView === 'EDIT_HABIT_LOG' && selectedHabit && habitLogIDToEdit && <EditHabitTrackingForm profile={profile} habit={selectedHabit} viewReset={viewReset} logIDToEdit={habitLogIDToEdit} handleViewDetails={handleViewDetails} />}
             <div>
                 <h2 className="text-xl font-bold">Your Habits</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4">

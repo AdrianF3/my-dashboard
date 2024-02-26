@@ -199,7 +199,7 @@ const IndexPage: React.FC = ({  }) => {
     }
 
     return (
-        <>
+        <>            
             <section className='flex flex-col w-full bg-base-100'>
                 {/* Top div */}
                 <HeaderNavigationBar />

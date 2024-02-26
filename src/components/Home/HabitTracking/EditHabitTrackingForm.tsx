@@ -1,53 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { UserProfile } from "@/types/UserProfile.types";
 import { Habit } from "@/types/Habit.types";
 import { db } from "../../../firebaseConfig";
-import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore";
-import { v4 as uuidv4 } from 'uuid';
+import { doc, updateDoc, arrayUnion, arrayRemove, Timestamp } from "firebase/firestore";
+import { format } from 'date-fns';
 
-const HabitTrackingForm: React.FC<{ profile: UserProfile | null; habit: Habit; viewReset: () => void; handleViewDetails: () => void }> = ({ profile, habit, viewReset, handleViewDetails }) => {
+const EditHabitTrackingForm: React.FC<{ profile: UserProfile | null; habit: Habit; viewReset: () => void; logIDToEdit: string; handleViewDetails: () => void }> = ({ profile, habit, viewReset, logIDToEdit, handleViewDetails }) => {
     const [progress, setProgress] = useState('');
-    const [trackingDate, setTrackingDate] = useState(() => new Date().toISOString().split('T')[0]); // Default to today's date in YYYY-MM-DD format
-    const [trackingTime, setTrackingTime] = useState(() => new Date().toTimeString().split(' ')[0]); // Default to the current time
+    const [trackingDate, setTrackingDate] = useState('');
+    const [trackingTime, setTrackingTime] = useState('');
+    const [logEntryToEdit, setLogEntryToEdit] = useState<any | null>(null);
+
+    useEffect(() => {
+        // Find the log entry by ID
+        const logEntry = habit.logs.find(log => log.id === logIDToEdit);
+        if (logEntry) {
+            setLogEntryToEdit(logEntry);
+            setProgress(logEntry.count.toString());
+            if (logEntry.dateTime) {
+                const date = logEntry.dateTime.toDate();
+                setTrackingDate(format(date, 'yyyy-MM-dd'));
+                setTrackingTime(format(date, 'HH:mm'));
+            }
+        }
+    }, [habit.logs, logIDToEdit]);
 
     const trackHabitProgress = async () => {
-        if (!profile || !progress.trim()) return; // Ensure profile exists and progress is not empty
+        if (!profile || !logEntryToEdit || !progress.trim()) return;
 
-        // Combine date and time inputs to create a Date object
         const combinedDateTime = new Date(`${trackingDate}T${trackingTime}`);
-
-        const logEntry = {
-            id: uuidv4(), // Generate a unique ID for the log entry
-            dateTime: Timestamp.fromDate(combinedDateTime), // Create a Firestore Timestamp from the Date object
-            count: parseInt(progress, 10), // Convert progress to integer   
-            note: ''         
+        const updatedLogEntry = {
+            ...logEntryToEdit,
+            dateTime: Timestamp.fromDate(combinedDateTime),
+            count: parseInt(progress, 10),
         };
-
+        console.log('updatedLogEntry', updatedLogEntry)
         try {
-            // Reference to the specific habit document
             const habitRef = doc(db, "userProfile", profile.uid, "userHabits", habit.id);
 
-            // Update the habit document by appending the new log entry to the logs array
+            // First, remove the existing log entry
             await updateDoc(habitRef, {
-                logs: arrayUnion(logEntry)
+                logs: arrayRemove(logEntryToEdit)
             });
 
-            console.log("Progress tracked successfully");
+            // Then, add the updated log entry
+            await updateDoc(habitRef, {
+                logs: arrayUnion(updatedLogEntry)
+            });
 
-            // Reset fields after tracking
-            setProgress('');
-            setTrackingDate(new Date().toISOString().split('T')[0]);
-            setTrackingTime(new Date().toTimeString().split(' ')[0]);
-            handleViewDetails(); // Switch back to the habit details view
+            console.log("Log updated successfully");
+            handleViewDetails();
         } catch (error) {
-            console.error("Error tracking progress:", error);
+            console.error("Error updating log:", error);
         }
     };
 
+    if (!logEntryToEdit) return <p>Loading log details...</p>;
+
     return (
         <div className="bg-accent text-accent-content p-6">
-            <h2 className="text-xl font-bold">Track Habit Progress</h2>
+            <h2 className="text-xl font-bold">Edit Habit Progress Log</h2>
             <p className="text-sm mb-4">Habit: {habit.title}</p>
+            {/* Form fields remain largely unchanged, only button text is updated */}
             <div className="form-control">
                 <label className="label">
                     <span className="label-text">Progress</span>
@@ -83,11 +97,11 @@ const HabitTrackingForm: React.FC<{ profile: UserProfile | null; habit: Habit; v
                 />
             </div>
             <div className="flex flex-row gap-4 justify-evenly">
-                <button onClick={trackHabitProgress} className="btn btn-primary mt-4">Track Progress</button>
+                <button onClick={trackHabitProgress} className="btn btn-primary mt-4">Update Log</button>
                 <button onClick={viewReset} className="btn btn-secondary mt-4">Back</button>
             </div>
         </div>
     );
 };
 
-export default HabitTrackingForm;
+export default EditHabitTrackingForm;
