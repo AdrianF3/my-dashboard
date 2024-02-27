@@ -5,7 +5,7 @@ export interface Habit {
     id: string; // Unique identifier for each habit
     title: string;
     goal: number;    
-    beginDateTime: Timestamp | null;
+    beginDateTime: Timestamp;
     frequency: string;
     logs: HabitLog[];  
   }

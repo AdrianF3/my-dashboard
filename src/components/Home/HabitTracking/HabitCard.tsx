@@ -9,7 +9,7 @@ interface HabitCardProps {
   frequency: string;
   id: string;
   logs: HabitLog[];
-  beginDateTime: Timestamp | null;
+  beginDateTime: Timestamp;
   handleViewChange: (
     view: 'TRACK_HABIT' | 'HABIT_DETAILS',
     habit: HabitCardProps

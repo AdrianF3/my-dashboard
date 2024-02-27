@@ -5,6 +5,12 @@ import { format, differenceInCalendarDays, startOfWeek, startOfMonth, set } from
 import { Timestamp } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { eachDayOfInterval, endOfDay } from 'date-fns';
+
+interface LogCountsByDate {
+  [dateKey: string]: number;
+}
 
 
 const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLog: (view: 'EDIT_HABIT_LOG', habit: Habit | null, logID: string | null) => void, userID: string, handleViewDetails: () => void }> = ({ habit, viewReset, handleEditLog, userID, handleViewDetails }) => {
@@ -14,7 +20,7 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);  
   const [confirmDelete, setConfirmDelete] = useState(false);
-
+console.log('periods', periods)
   useEffect(() => {
     const groupLogs = () => {
       const groups: { [key: string]: any[] } = {};
@@ -147,6 +153,40 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
     )) : <p>No logs for this period.</p>
   );
 
+  // Assuming habit.beginDateTime is the starting point and habit.logs contain the logs
+const startDate = habit.beginDateTime.toDate();
+const endDate = new Date(); // or use the date of the last log entry if more appropriate
+const dateRange = eachDayOfInterval({ start: startDate, end: endDate });
+
+// Prepare an object mapping dates to cumulative log counts for easier access
+const logCountsByDate = habit.logs.reduce((acc: LogCountsByDate, log) => {
+  const dateKey = format(log.dateTime.toDate(), 'yyyy-MM-dd');
+  acc[dateKey] = (acc[dateKey] || 0) + log.count;
+  return acc;
+}, {} as LogCountsByDate);
+
+
+let cumulativeActual = 0; // Track cumulative progress
+const graphData = dateRange.map(date => {
+  const dateKey = format(date, 'yyyy-MM-dd');
+  const dailyActual = logCountsByDate[dateKey] || 0; // Daily progress from logs
+  cumulativeActual += dailyActual; // Update cumulative progress
+  const dayDifference = differenceInCalendarDays(endOfDay(date), startDate) + 1;
+  const expectedProgress = habit.goal * dayDifference;
+  const dailyDifference = cumulativeActual - expectedProgress; // Calculate daily difference
+
+  return {
+    date: dateKey,
+    Daily: dailyActual,
+    Cumulative: cumulativeActual,
+    Expected: expectedProgress,
+    Difference: dailyDifference, // Add daily difference to your data object
+  };
+});
+
+
+  
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
       <h2 className="text-3xl font-bold mb-4">{habit.title}</h2>
@@ -188,7 +228,36 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
           ))}
         </div>
       </div>      
-      {/* The rest of your component */}
+      {/* Graph showing expected vs. actual progress */}
+      <div className="my-4">
+        <h3 className="text-xl font-semibold mb-2">Progress Graph</h3>
+        <div style={{ width: '100%', maxWidth: '100%' }}>
+        <LineChart
+          width={window.innerWidth - 100 } // Adjust margin as needed
+          height={300}
+          data={graphData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}          
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="Expected" stroke="#8884d8" activeDot={{ r: 8 }} />          
+          <Line type="monotone" dataKey="Cumulative" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="Daily" stroke="#ffc658" />
+          <Line type="monotone" dataKey="Difference" stroke="#ff7300" />
+
+
+        </LineChart>
+        </div>
+      </div>
+
       {isDeleteModalOpen && (
         <div className="modal modal-open">
           <div className="modal-box">
