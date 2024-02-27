@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Habit } from '@/types/Habit.types';
 import 'react-datepicker/dist/react-datepicker.css';
-import { format, differenceInCalendarDays, startOfWeek, startOfMonth } from 'date-fns';
+import { format, differenceInCalendarDays, startOfWeek, startOfMonth, set } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 
 const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLog: (view: 'EDIT_HABIT_LOG', habit: Habit | null, logID: string | null) => void, userID: string, handleViewDetails: () => void }> = ({ habit, viewReset, handleEditLog, userID, handleViewDetails }) => {
@@ -12,8 +12,8 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   const [periods, setPeriods] = useState<any[]>([]);
   const [selectedPeriodLogs, setSelectedPeriodLogs] = useState<any[]>([]); // State to store logs of the selected period
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);
-  console.log('habit', habit)
+  const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);  
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     const groupLogs = () => {
@@ -44,7 +44,7 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
       setGroupedLogs(groups);
   
       const sortedKeys = Object.keys(groups).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-      const periodsArray = sortedKeys.slice(0, 5).map(key => ({ period: key, logs: groups[key] }));
+      const periodsArray = sortedKeys.map(key => ({ period: key, logs: groups[key] }));
       setPeriods(periodsArray);
   
       // Set the most recent period logs as the selected period logs
@@ -68,14 +68,28 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   const daysSinceBegin = habit.beginDateTime && habit.beginDateTime instanceof Timestamp
     ? differenceInCalendarDays(new Date(), habit.beginDateTime.toDate())
     : 0;
-  const cumulativeGoal = habit.goal * daysSinceBegin;
+  const cumulativeGoal = habit.goal * ( daysSinceBegin + 1 );
 
   const progressPercentage = ((totalProgress / cumulativeGoal) * 100).toFixed(2);
   const difference = totalProgress - cumulativeGoal;
 
+  // Delete Habit Function
+  const deleteHabit = async () => {
+    const habitRef = doc(db, "userProfile", userID, "userHabits", habit.id); // Adjust path as necessary
+
+    try {
+      await deleteDoc(habitRef);
+      console.log("Habit deleted successfully");
+      // Optionally handle any additional logic after deleting the habit
+    } catch (error) {
+      console.error("Error deleting habit:", error);
+    }
+    setConfirmDelete(false);
+    viewReset();
+  };
+
   // Delete Log Function
-  const deleteLog = async (logId: string | null) => {
-    console.log('logId', logId)
+  const deleteLog = async (logId: string | null) => {    
     if (!logId) return;
 
     const updatedLogs = habit.logs.filter(log => log.id !== logId);
@@ -149,6 +163,11 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
         <p className="">{totalProgress} of {cumulativeGoal} | ({difference})</p>
       </div>      
 
+      <div className='flex flex-row justify-end'>      
+        { !confirmDelete ? <button className="btn btn-error" onClick={() => setConfirmDelete(true)}>Delete Habit?</button>  : 
+        <button className="btn btn-error" onClick={() => deleteHabit()}>Confirm Deletion</button> }
+      </div>
+
       <div className='bg-primary/70 text-primary-content p-2 rounded-xl my-4 overflow-auto' style={{ maxHeight: '50vh' }}>
         <h3 className="text-xl font-semibold mb-2 text-center pb-2">Logs for Selected Period</h3>
         <div className='flex flex-wrap gap-4 justify-center'>{renderSelectedPeriodLogs()}</div>
@@ -156,9 +175,9 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
 
 
 
-      <div className='bg-secondary/70 text-secondary-content p-2 rounded-xl my-4'>
+      <div className='h-fit bg-secondary/70 text-secondary-content p-2 rounded-xl my-4'>
         <h3 className="text-xl font-semibold mb-2">Trending Data:</h3>
-        <div className='flex flex-row overflow-auto gap-4'>
+        <div className='flex flex-row w-full overflow-auto gap-4'>
           {periods.map((period, index) => (
             <div key={index} className="card w-fit bg-base-100 shadow-xl mb-2 p-4 cursor-pointer" onClick={() => handlePeriodClick(period.logs)}>
               <div className="card-body">

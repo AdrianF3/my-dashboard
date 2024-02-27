@@ -33,6 +33,13 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
         return () => unsubscribe();
     }, [profile]);
 
+    useEffect(() => {
+        if (selectedHabit) {
+            const updatedSelectedHabit = habits.find(habit => habit.id === selectedHabit.id);
+            setSelectedHabit(updatedSelectedHabit || null);
+        }
+    }, [habits, selectedHabit]);
+
     const handleViewChange = (view: ViewMode, habit: Habit | null) => {
         setCurrentView(view);
         setSelectedHabit(habit);
