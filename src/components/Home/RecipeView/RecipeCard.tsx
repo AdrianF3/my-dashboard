@@ -84,7 +84,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ index, recipe, recipeCategories
                         </div>
                     </a>
                     {/* Original Recipe URL */}
-                    <a href={recipe.pdfRecipeURL} target="_blank" rel='noreferrer' className="font-bold text-lg text-center text-slate-700">
+                    <a href={recipe.recipeURL} target="_blank" rel='noreferrer' className="font-bold text-lg text-center text-slate-700">
                       <div className='flex justify-between items-center gap-4'>
                         {/* {recipe.recipeURL} */}
                         <GrLink />

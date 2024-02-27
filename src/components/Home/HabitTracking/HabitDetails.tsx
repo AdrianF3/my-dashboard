@@ -13,6 +13,7 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   const [selectedPeriodLogs, setSelectedPeriodLogs] = useState<any[]>([]); // State to store logs of the selected period
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);
+  console.log('habit', habit)
 
   useEffect(() => {
     const groupLogs = () => {
@@ -41,13 +42,22 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
         }
       });
       setGroupedLogs(groups);
-
+  
       const sortedKeys = Object.keys(groups).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-      setPeriods(sortedKeys.slice(0, 5).map(key => ({ period: key, logs: groups[key] })));
+      const periodsArray = sortedKeys.slice(0, 5).map(key => ({ period: key, logs: groups[key] }));
+      setPeriods(periodsArray);
+  
+      // Set the most recent period logs as the selected period logs
+      // Check if there are any periods before attempting to set the selectedPeriodLogs
+      if (periodsArray.length > 0) {
+        const mostRecentPeriodLogs = periodsArray[0].logs;
+        setSelectedPeriodLogs(mostRecentPeriodLogs);
+      }
     };
-
+  
     groupLogs();
-  }, [habit.logs, habit.logs.length, habit.frequency]);
+  }, [habit.logs, habit.frequency]);
+  
 
   const totalProgress = habit.logs.reduce((acc, curr) => acc + curr.count, 0);
 
@@ -125,29 +135,30 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
-      <div className="bg-white shadow-md rounded-lg p-4">
       <h2 className="text-3xl font-bold mb-4">{habit.title}</h2>
-      <p className="text-lg mb-2">Begin Date: {formattedBeginDateTime}</p>
-      <p className="text-lg mb-2">Goal: {habit.goal}</p>
-      <p className="text-lg mb-4">Frequency: {habit.frequency}</p>
-      <p className="text-lg">Expected Progress Towards Goal: {cumulativeGoal}</p>
-      <p className="text-lg">Current Total Progress: {totalProgress}</p>
-
-      <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700 my-2">
+      <p className="text-lg mb-2">Started: {formattedBeginDateTime}</p>
+      <p className="text-lg mb-2">Frequency: {habit.frequency}</p>      
+      <p className="text-lg mb-4">Goal: {habit.goal}</p>
+      <div className="w-8/12 bg-gray-200 rounded-full dark:bg-gray-700 my-2 mx-auto">
         <div className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style={{ width: `${progressPercentage}%` }}>
           {progressPercentage}%
         </div>
       </div>
+      <div className='flex flex-col justify-center items-center my-4'>
+        <p className="text-lg uppercase">Overall Progress</p>
+        <p className="">{totalProgress} of {cumulativeGoal} | ({difference})</p>
+      </div>      
+
+      <div className='bg-primary/70 text-primary-content p-2 rounded-xl my-4 overflow-auto' style={{ maxHeight: '50vh' }}>
+        <h3 className="text-xl font-semibold mb-2 text-center pb-2">Logs for Selected Period</h3>
+        <div className='flex flex-wrap gap-4 justify-center'>{renderSelectedPeriodLogs()}</div>
       </div>
 
-      <div className='bg-primary/70 text-primary-content p-2 rounded-xl'>
-        <h3 className="text-xl font-semibold mb-2">Logs for Selected Period:</h3>
-        <div className='flex flex-wrap gap-4'>{renderSelectedPeriodLogs()}</div>
-      </div>
+
 
       <div className='bg-secondary/70 text-secondary-content p-2 rounded-xl my-4'>
         <h3 className="text-xl font-semibold mb-2">Trending Data:</h3>
-        <div className='flex flex-wrap flex-row gap-4'>
+        <div className='flex flex-row overflow-auto gap-4'>
           {periods.map((period, index) => (
             <div key={index} className="card w-fit bg-base-100 shadow-xl mb-2 p-4 cursor-pointer" onClick={() => handlePeriodClick(period.logs)}>
               <div className="card-body">
