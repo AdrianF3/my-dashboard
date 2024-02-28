@@ -16,6 +16,7 @@ import { MdOutlineLibraryAdd } from "react-icons/md";
 import LoginForm from '@/components/Home/DashboardGridComponents/LoginForm';
 import RecipesDisplay from '@/components/Home/RecipeView/RecipesDisplay';
 import HabitTracking from '@/components/Home/DashboardGridComponents/HabitTracking';
+import BookmarkDisplay from '@/components/Home/BookmarkView/BookmarkDisplay';
 
 interface IndexPageProps {
     authenticated: boolean;
@@ -125,10 +126,7 @@ const IndexPage: React.FC = ({  }) => {
                 );
             case "bookmarks":
                 return (
-                    <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
-                        <CgBookmark />
-                        <p className="text-primary-content font-bold text-lg">Bookmarks*</p>
-                    </div>
+                    <BookmarkDisplay profile={profile} />
                 );
             case "important-dates":
                 return (

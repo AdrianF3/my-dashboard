@@ -28,7 +28,7 @@ Building simple, helpful tools to help manage life.
 - Finished building out basic habit tracking and display functionality before moving to backend integration
 - Updates to habit tracking, properly displaying and calculating progress and displaying details committing to test data live for bugs
 - Fix to Recipe URL Card, updates to log display to fix issues
-
+- Began working on the integration of bookmarks with the profile document
 
 
 
