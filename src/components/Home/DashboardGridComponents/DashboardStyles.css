@@ -1,0 +1,28 @@
+.weather-background {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.weather-background.clear {
+  background-color: #87CEEB; /* Light blue for clear days */
+  color: #000000; /* Dark text for light background */
+}
+
+.weather-background.clouds {
+  background-color: #C0C0C0; /* Gray for cloudy days */
+  color: #000000; /* Dark text for gray background */
+}
+
+.weather-background.rain {
+  background-color: #9ecae1; /* Light blue for rainy days */
+  color: #000000; /* Dark text for light background */
+}
+
+.weather-background.snow {
+  background-color: #fffafa; /* Snow white for snowy days */
+  color: #000000; /* Dark text for very light background */
+}
+
+.weather-background.night {
+  background-color: #343a40; /* Dark for night */
+  color: #FFFFFF; /* White text for dark background */
+}
