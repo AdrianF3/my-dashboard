@@ -253,6 +253,9 @@ const IndexPage: React.FC = ({  }) => {
                     {renderSelectedView()}
                     
                 </section>
+                <div className='flex flex-col justify-center text-black text-center'>
+                    <p>Version 0.1.4</p>
+                </div>
             </section>
         </>
     );

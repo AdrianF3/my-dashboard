@@ -2,40 +2,80 @@ import React, { useState, useEffect } from 'react';
 import { UserProfile } from '../../../types/UserProfile.types';
 import { BookmarkCategory } from '@/types/BookmarkCategory.types';
 import { Bookmark } from '@/types/Bookmark.types';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../firebaseConfig';
 
 
-const AddBookmarkForm: React.FC<{ profile: UserProfile; }> = ({ profile }) => {
-  const [newBookmark, setNewBookmark] = useState<Bookmark>({ url: '', description: '' });
+const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory: BookmarkCategory; }> = ({ profile, selectedCategory }) => {
+  const [newBookmark, setNewBookmark] = useState<Bookmark>({ url: 'http://', description: '' });
   const [newCategory, setNewCategory] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  
 
   useEffect(() => {
-    if (profile.categories && profile.categories.length > 0) {
-      setSelectedCategory(profile.categories[0].name);
+    if (selectedCategory) {
+      setNewCategory(selectedCategory.name);
     }
-  }, [profile.categories]);
 
+  }, [selectedCategory]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!profile || !profile.categories) return;
+
     let categoryToUpdate: BookmarkCategory | undefined;
 
-    if (newCategory) {
+    const isExistingCategory = profile.categories.some(category => category.name === newCategory);
+    console.log('isExistingCategory', isExistingCategory);
+
+    
+
+
+    if (!isExistingCategory && newCategory) {
+      console.log('Adding a new category', newCategory)
       // Create new category with the bookmark
       categoryToUpdate = { name: newCategory, isPrivate, bookmarks: [newBookmark] };
-      profile.categories.push(categoryToUpdate);
-    } else {
+
+      // Add new category to userProfile document
+      try {
+        const userProfileRef = doc(db, 'userProfile', profile.uid);
+        await updateDoc(userProfileRef, {
+          categories: [...profile.categories, categoryToUpdate]
+        });
+
+      } catch (error) {
+        console.error('Error adding new category:', error);                
+      }
+
+      
+    } else if (isExistingCategory) {
+      console.log('Adding a bookmark to an existing category', newCategory)
       // Add bookmark to existing category
-      categoryToUpdate = profile.categories.find(category => category.name === selectedCategory);
-      categoryToUpdate?.bookmarks.push(newBookmark);
+      categoryToUpdate = profile.categories.find(category => category.name === selectedCategory.name);
+      if (categoryToUpdate) {
+        try {
+          const userProfileRef = doc(db, 'userProfile', profile.uid);
+          const updatedCategories = profile.categories.map(category => {
+            if (category.name === selectedCategory.name) {
+              return { ...category, bookmarks: [...category.bookmarks, newBookmark] };
+            }
+            return category;
+          });
+          await updateDoc(userProfileRef, { categories: updatedCategories });
+
+        } catch (error) {
+          console.error('Error adding bookmark to existing category:', error);        
+        }
+      }
     }
 
     
     // Reset form
-    setNewBookmark({ url: '', description: '' });
+    setNewBookmark({ url: 'http://', description: '' });
     setNewCategory('');
     setIsPrivate(false);
-    setSelectedCategory(profile.categories[0].name);
+    // setSelectedCategory(profile.categories[0].name);
   };
 
   return (
@@ -55,7 +95,7 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile; }> = ({ profile }) => {
       />
       <input
         type="text"
-        placeholder="New Category (optional)"
+        placeholder="New Category (or select an existing one above)"
         value={newCategory}
         onChange={e => setNewCategory(e.target.value)}
       />
@@ -66,13 +106,13 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile; }> = ({ profile }) => {
           onChange={e => setIsPrivate(e.target.checked)}
         /> Mark Category as Private
       </label>
-      {profile.categories && profile.categories.length > 0 && !newCategory && (
+      {/* {profile.categories && profile.categories.length > 0 && !newCategory && (
         <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
           {profile.categories.map(category => (
             <option key={category.name} value={category.name}>{category.name}</option>
           ))}
         </select>
-      )}
+      )} */}
       <button type="submit" className="btn">Add Bookmark</button>
     </form>
   );
