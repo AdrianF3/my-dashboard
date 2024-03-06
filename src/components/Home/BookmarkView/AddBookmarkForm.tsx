@@ -80,40 +80,36 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <h2>Add a New Bookmark</h2>
+      <label htmlFor="url">Link Address</label>
       <input
+        className="input w-full max-w-xs"
+        name='url'
         type="text"
         placeholder="Bookmark URL"
         value={newBookmark.url}
         onChange={e => setNewBookmark({ ...newBookmark, url: e.target.value })}
         required
       />
-      <textarea
-        placeholder="Bookmark Description"
+      <label htmlFor="label">Label</label>
+      <input
+        className="input w-full max-w-xs"
+        name='label'
+        placeholder="Bookmark Label"
         value={newBookmark.description}
         onChange={e => setNewBookmark({ ...newBookmark, description: e.target.value })}
         required
       />
+      <label htmlFor="category">Category</label>
       <input
+        className="input w-full max-w-xs"
+        name='category'
         type="text"
         placeholder="New Category (or select an existing one above)"
         value={newCategory}
         onChange={e => setNewCategory(e.target.value)}
-      />
-      <label>
-        <input
-          type="checkbox"
-          checked={isPrivate}
-          onChange={e => setIsPrivate(e.target.checked)}
-        /> Mark Category as Private
-      </label>
-      {/* {profile.categories && profile.categories.length > 0 && !newCategory && (
-        <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
-          {profile.categories.map(category => (
-            <option key={category.name} value={category.name}>{category.name}</option>
-          ))}
-        </select>
-      )} */}
-      <button type="submit" className="btn">Add Bookmark</button>
+      />        
+      <button type="submit" className="btn btn-success">Add Bookmark</button>
     </form>
   );
 };
