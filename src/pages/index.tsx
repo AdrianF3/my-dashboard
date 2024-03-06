@@ -4,6 +4,7 @@ import firebaseAdmin from '../utils/firebaseAdmin';
 import HeaderNavigationBar from '@/components/SharedComponents/HeaderNavigationBar';
 import Dashboard from '@/components/Home/DashboardGridComponents/Dashboard';
 import useUserProfile from '../hooks/useUserProfile';
+import ProfileSettingsView from '@/components/ProfileSettings/ProfileSettingsView';
 import { useAuth } from '../contexts/AuthContext'; // Adjust the path according to your project structure
 
 
@@ -75,12 +76,7 @@ const IndexPage: React.FC = ({  }) => {
         if (profile) {
             setTheme(profile.theme);            
         }
-    }, [profile]);
-    
-    // Function to toggle the theme
-    // const toggleTheme = (theme: string) => {
-    // setTheme(theme);
-    // };    
+    }, [profile]);    
 
     React.useEffect(() => {                               
         if (user && user.uid) {
@@ -128,11 +124,11 @@ const IndexPage: React.FC = ({  }) => {
                 return (
                     <BookmarkDisplay profile={profile} />
                 );
-            case "important-dates":
+            case "timelines":
                 return (
                     <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
                         <CgCalendarDates />
-                        <p className="text-primary-content font-bold text-lg">Important Dates*</p>
+                        <p className="text-primary-content font-bold text-lg">Timelines*</p>
                     </div>
                 );
             case "to-do":
@@ -155,25 +151,7 @@ const IndexPage: React.FC = ({  }) => {
                 );
             case "profile-settings":
                 return (<>
-                    <div className="rounded-lg bg-accent text-primary-content flex flex-row justify-center items-center gap-4 p-4">
-                        <CgProfile />
-                        <p className="font-bold text-lg">Profile & Settings</p>
-                    </div>
-                        <div className='rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4 mt-10'>
-                            <p>Current Theme: {theme}</p>                            
-                            {/* Select to choose new theme from listOfThemes */}
-                            <select 
-                                className="select select-primary text-accent-content w-full max-w-xs"
-                                value={theme}
-                                onChange={(e) => setTheme(e.target.value)}
-                            >                                
-                                {listOfThemes.map((theme) => (
-                                <option key={theme} value={theme}>
-                                    {theme}
-                                </option>
-                                ))}
-                            </select>
-                        </div>
+                    <ProfileSettingsView profile={profile} />
                 </>
                 );
             default:
@@ -218,23 +196,18 @@ const IndexPage: React.FC = ({  }) => {
                     {/* Habit Tracking */}
                     <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('habit-tracking')}>
                         <MdOutlineLibraryAdd />
-                        <p className="text-primary-content font-bold text-lg">Habit Tracking*</p>
+                        <p className="text-primary-content font-bold text-lg">Habit Tracking</p>
                     </div>
                     {/* Bookmarks */}
                     <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('bookmarks')}>
                         <CgBookmark />
-                        <p className="text-primary-content font-bold text-lg">Bookmarks*</p>
+                        <p className="text-primary-content font-bold text-lg">Bookmarks</p>
                     </div>
-                    {/* Important Dates */}
-                    <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('important-dates')}>
+                    {/* Timelines */}
+                    <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('timelines')}>
                         <CgCalendarDates />
-                        <p className="text-primary-content font-bold text-lg">Important Dates*</p>
-                    </div>
-                    {/* To Do  */}
-                    <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('to-do')}>
-                        <LuListTodo />
-                        <p className="text-primary-content font-bold text-lg">To Do*</p>
-                    </div>
+                        <p className="text-primary-content font-bold text-lg">Timelines*</p>
+                    </div>                    
                     {/* Budget */}
                     <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('budget')}>
                         <BiMoneyWithdraw />
@@ -254,7 +227,7 @@ const IndexPage: React.FC = ({  }) => {
                     
                 </section>
                 <div className='flex flex-col justify-center text-black text-center'>
-                    <p>Version 0.1.4</p>
+                    <p>Version 0.1.5</p>
                 </div>
             </section>
         </>

@@ -67,13 +67,6 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
                 <h1 className="text-2xl font-bold">Habit Tracking</h1>
                 <p className="text-md">Track your habits with goals and frequency to monitor your progress and maintain consistency. Set specific objectives for each habit to achieve your personal development goals.</p>
             </div>
-            {/* Main Habit Display */}
-            <div>
-                {currentView === 'ADD_HABIT' && <AddHabitForm profile={profile} />}
-                {currentView === 'TRACK_HABIT' && selectedHabit && <HabitTrackingForm profile={profile} habit={selectedHabit} viewReset={viewReset} handleViewDetails={handleViewDetails} />}
-                {currentView === 'HABIT_DETAILS' && selectedHabit && profile && <HabitDetails habit={selectedHabit} viewReset={viewReset} handleEditLog={handleEditLog} userID={profile.uid} handleViewDetails={handleViewDetails}  />}
-                {currentView === 'EDIT_HABIT_LOG' && selectedHabit && habitLogIDToEdit && <EditHabitTrackingForm profile={profile} habit={selectedHabit} viewReset={viewReset} logIDToEdit={habitLogIDToEdit} handleViewDetails={handleViewDetails} />}
-            </div>
             <div>
                 <h2 className="text-xl font-bold">Your Habits</h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4">
@@ -90,6 +83,13 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
                         />
                     ))}
                 </div>
+            </div>
+            {/* Main Habit Display */}
+            <div>
+                {currentView === 'ADD_HABIT' && <AddHabitForm profile={profile} />}
+                {currentView === 'TRACK_HABIT' && selectedHabit && <HabitTrackingForm profile={profile} habit={selectedHabit} viewReset={viewReset} handleViewDetails={handleViewDetails} />}
+                {currentView === 'HABIT_DETAILS' && selectedHabit && profile && <HabitDetails habit={selectedHabit} viewReset={viewReset} handleEditLog={handleEditLog} userID={profile.uid} handleViewDetails={handleViewDetails}  />}
+                {currentView === 'EDIT_HABIT_LOG' && selectedHabit && habitLogIDToEdit && <EditHabitTrackingForm profile={profile} habit={selectedHabit} viewReset={viewReset} logIDToEdit={habitLogIDToEdit} handleViewDetails={handleViewDetails} />}
             </div>
         </div>
     );

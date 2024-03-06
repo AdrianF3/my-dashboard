@@ -8,7 +8,7 @@ Building simple, helpful tools to help manage life.
 ## Current Version 
 
 
-#### Version 0.1.4 - Started 1/23/2024 - Ended ###
+#### Version 0.1.5 - Started 1/23/2024 - Ended ###
 - **Fixed** the issue where the application was not recognizing `src/pages/index.tsx` as the homepage due to incorrect file structure. Moved the file from `src/app/pages/index.tsx` to `src/pages/index.tsx` to align with Next.js conventions.
 - Implemented - DaisyUI and Firebase to begin the backend Integration.
 - Implemented - The beginning of the authenticationUI component
@@ -30,6 +30,7 @@ Building simple, helpful tools to help manage life.
 - Fix to Recipe URL Card, updates to log display to fix issues
 - Began working on the integration of bookmarks with the profile document
 - Finished the initial implemntaion of the bookmarks and began working out the display and laytout of the bookmarks
+- Began working on some polishing of componets so far as well as beginning the devlopment of the Profile & Settings section
 
 
 

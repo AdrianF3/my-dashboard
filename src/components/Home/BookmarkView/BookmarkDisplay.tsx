@@ -5,6 +5,7 @@ import { BookmarkCategory } from '@/types/BookmarkCategory.types';
 import { Bookmark } from '@/types/Bookmark.types';
 import Link from "next/link";
 import { AiOutlineDelete } from 'react-icons/ai';
+import { MdOutlinePrivacyTip } from 'react-icons/md';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 
@@ -108,20 +109,24 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
     return (
         <div className="flex flex-col gap-4 justify-around rounded border-2 border-accent self-center bg-primary text-primary-content p-4">
             <div className="flex flex-col justify-center">
+              <div className="flex flex-col p-4">
                 <h1 className="text-2xl font-bold">Bookmarks</h1>
-                <p>paragraph about how it works</p>
+                <p className="text-lg text-accent-content">
+                  Welcome to your bookmarks! Here you can view and manage your bookmarks. You can create categories to organize your bookmarks and add bookmarks to each category. You can also delete categories and bookmarks.
+                </p>
+              </div>
                 {profile && profile.categories && profile.categories.length > 0 ? (
-                  <div className="border-2 border-accent rounded-xl self-center w-8/12">
+                  <div className="border-2 border-accent rounded-xl self-center w-8/12 p-4">
+                    <h2>Categories</h2>
                     {/* Category Selector */}
-                    <div>
-                      <h2>Categories</h2>
+                    <div className="flex flex-wrap">
                     {profile.categories.map(category => (
                       <button 
                         key={category.name} 
                         onClick={() => handleCategorySelect(category.name)}
                         className={`m-2 p-2 rounded btn ${selectedCategory?.name === category.name ? 'btn-success text-primary' : 'btn-success-outline text-accent'}`}
                       >
-                        {category.name}
+                        {category.name }: { category.bookmarks.length}
                       </button>
                     ))}                         
                     </div>
@@ -144,13 +149,26 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                         ))}
                       </div>
                     )}
-                    <h2>{selectedCategory.name} Category Options</h2>
-                    <div className="flex flex-row w-full justify-around">
-                      <button 
-                        className="btn btn-circle btn-outline" 
-                        onClick={() => handleCategoryPrivacyToggle(selectedCategory)}
-                      >Toggle Privacy</button>
-                      <button className="btn btn-circle btn-outline" onClick={() => setConfirmCategoryDelete(true)}>Delete Category</button>
+                    <div className="flex flex-col p-4 border-t-2 mt-10">
+
+                      
+                      <h2>{selectedCategory.name} Category Options</h2>
+                      <div className="flex flex-row w-full justify-around">
+                        <div className="flex flex-col justify-center items-center">
+                          <button 
+                            className="btn btn-circle btn-outline" 
+                            onClick={() => handleCategoryPrivacyToggle(selectedCategory)}
+                          >
+                            <MdOutlinePrivacyTip />
+                            </button>
+                            <p className=''>Toggle Privacy</p>
+                        </div>
+                        <div className="flex flex-col justify-center items-center">
+                          <button className="btn btn-circle btn-outline" onClick={() => setConfirmCategoryDelete(true)}><AiOutlineDelete /></button>
+                          <p>Delete Category</p>
+                        </div>
+                          
+                      </div>               
                     </div>               
                   </div>
                 ) : <p>No categories found</p>}                
