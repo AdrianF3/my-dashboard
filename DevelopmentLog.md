@@ -31,6 +31,7 @@ Building simple, helpful tools to help manage life.
 - Began working on the integration of bookmarks with the profile document
 - Finished the initial implemntaion of the bookmarks and began working out the display and laytout of the bookmarks
 - Began working on some polishing of componets so far as well as beginning the devlopment of the Profile & Settings section
+- Added the ability to edit the profile fields via the settings view
 
 
 
