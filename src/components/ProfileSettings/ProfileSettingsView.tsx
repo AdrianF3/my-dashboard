@@ -212,7 +212,7 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                     onChange={(e) => setTheme(e.target.value)}
                 >                                
                     {listOfThemes.map((theme) => (
-                    <option key={theme} value={theme} className="bg-accent text-black">
+                    <option key={theme} value={theme} className="bg-accent text-accent-content">
                         {theme}
                     </option>
                     ))}

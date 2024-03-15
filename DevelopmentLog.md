@@ -6,9 +6,14 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
+#### Version 0.1.8 - Started 3/15/2024 - Ended #/#/2024
+- 
 
 
-#### Version 0.1.5 - Started 1/23/2024 - Ended ###
+
+
+### Previous Version History
+#### Version 0.1.6 - Started 1/23/2024 - Ended 3/15/2024
 - **Fixed** the issue where the application was not recognizing `src/pages/index.tsx` as the homepage due to incorrect file structure. Moved the file from `src/app/pages/index.tsx` to `src/pages/index.tsx` to align with Next.js conventions.
 - Implemented - DaisyUI and Firebase to begin the backend Integration.
 - Implemented - The beginning of the authenticationUI component
@@ -32,8 +37,4 @@ Building simple, helpful tools to help manage life.
 - Finished the initial implemntaion of the bookmarks and began working out the display and laytout of the bookmarks
 - Began working on some polishing of componets so far as well as beginning the devlopment of the Profile & Settings section
 - Added the ability to edit the profile fields via the settings view
-
-
-
-
-### Previous Version History
+- Updated the layout and abilities of bookmarks feature - user can now move between categories, change position and more

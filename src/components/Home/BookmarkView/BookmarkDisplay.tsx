@@ -8,6 +8,7 @@ import { AiOutlineDelete } from 'react-icons/ai';
 import { MdOutlinePrivacyTip } from 'react-icons/md';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
+import { GrLinkNext, GrLinkPrevious } from 'react-icons/gr';
 
 
 
@@ -15,12 +16,22 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
     // State for the selected category
     const [selectedCategory, setSelectedCategory] = useState<BookmarkCategory>({} as BookmarkCategory);
     const [confirmCategoryDelete, setConfirmCategoryDelete] = useState(false);
+    const [sortedCategories, setSortedCategories] = useState<BookmarkCategory[]>([]);
 
     // Update selectedCategory based on user action or initial load
     useEffect(() => {
       if (profile && profile.categories && profile.categories.length > 0) {
-        // Automatically select the first category initially or another logic
-        setSelectedCategory(profile.categories[0]);
+
+        const sortedCategories = profile.categories.sort((a, b) => a.position - b.position);
+        setSortedCategories(sortedCategories);
+        // Automatically select the first category if not already selected
+        if (!selectedCategory.name) {
+          setSelectedCategory(sortedCategories[0]);                    
+        } else {          
+          // find the index of the category that matches the selectedCategory.position and set that as the selectedCategory
+          const index = sortedCategories.findIndex(cat => cat.position === selectedCategory.position);
+          setSelectedCategory(sortedCategories[index]);
+        }
       }
     }, [profile]);
 
@@ -104,6 +115,74 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
       setConfirmCategoryDelete(false);
     };
 
+    // function to handle moving bewtween categories up or down, based on the category.position property
+    const handleCategoryPositingChange = (category: BookmarkCategory, direction: 'up' | 'down') => {
+      console.log('category', category)
+      // find current category position
+      const index = sortedCategories.findIndex(cat => cat.position === category.position);
+
+      
+      if (direction === 'up') {
+        console.log('up called')
+        //  if index is the last category in sortedCategories, setSelectedCategory to the first category
+        if (index === sortedCategories.length - 1) {
+          setSelectedCategory(sortedCategories[0]);
+        } else {
+          setSelectedCategory(sortedCategories[index + 1]);
+        }
+      }
+      if (direction === 'down') {
+        console.log('down called')
+        //  if index is the first category in sortedCategories, setSelectedCategory to the last category
+        if (index === 0) {
+          setSelectedCategory(sortedCategories[sortedCategories.length - 1]);
+        } else {
+          setSelectedCategory(sortedCategories[index - 1]);
+        }
+      }
+
+      
+
+
+
+    }
+
+
+   // Refactored function to handle moving a category up or down
+  const handleCategoryMove = (category: BookmarkCategory, direction: 'up' | 'down') => {
+    if (!profile) return;
+
+    const index = profile.categories.findIndex((cat) => cat.name === category.name);
+    if (index === -1) return; // Category not found
+
+    const swapIndex = direction === 'up' ? index - 1 : index + 1;
+    // Ensure swapIndex is within bounds
+    if (swapIndex < 0 || swapIndex >= profile.categories.length) return;
+
+    // Swap positions
+    let tempPosition = profile.categories[index].position;
+    profile.categories[index].position = profile.categories[swapIndex].position;
+    profile.categories[swapIndex].position = tempPosition;
+
+    // Sort categories based on new positions to maintain order
+    const sortedCategories = profile.categories.sort((a, b) => a.position - b.position);
+
+    // Update the profile with the new categories order
+    const updatedProfile = { ...profile, categories: sortedCategories };
+
+    // Log and update Firestore
+    console.log('updatedProfile', updatedProfile);
+    const profileRef = doc(db, 'userProfile', profile.uid);
+    updateDoc(profileRef, { categories: updatedProfile.categories })
+      .then(() => {
+        console.log('Profile updated successfully');
+      })
+      .catch((error) => {
+        console.error('Error updating profile:', error);
+      });
+  };
+
+
 
 
     return (
@@ -115,58 +194,89 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                   Welcome to your bookmarks! Here you can view and manage your bookmarks. You can create categories to organize your bookmarks and add bookmarks to each category. You can also delete categories and bookmarks.
                 </p>
               </div>
+              {/* Display Categories  */}
                 {profile && profile.categories && profile.categories.length > 0 ? (
                   <div className="border-2 border-accent rounded-xl self-center w-8/12 p-4">
                     <h2>Categories</h2>
                     {/* Category Selector */}
                     <div className="flex flex-wrap">
-                    {profile.categories.map(category => (
+                    {sortedCategories.map(category => (
                       <button 
                         key={category.name} 
                         onClick={() => handleCategorySelect(category.name)}
-                        className={`m-2 p-2 rounded btn ${selectedCategory?.name === category.name ? 'btn-success text-primary' : 'btn-success-outline text-accent'}`}
+                        className={`m-2 p-2 rounded btn ${selectedCategory?.name === category.name ? 'btn-info text-primary-content' : 'btn-info-outline text-primary-content'}`}
                       >
                         {category.name }: { category.bookmarks.length}
                       </button>
-                    ))}                         
+                    ))}            
+                                 
                     </div>
+                    <div className="flex flex-row justify-between gap-4 my-2 items-center border-b-2 border-accent pb-4">
+                      {/* Previous Category Button */}
+                      <div className="flex flex-col justify-center items-center text-center">
+                        <button className="btn btn-circle btn-outline" onClick={() => handleCategoryPositingChange(selectedCategory, 'down')}><GrLinkPrevious size={15} /></button>
+                        <p className="text-sm">Previous</p>
+                      </div>
+                      {/* Next Category Button */}
+                      <div className="flex flex-col justify-center items-center text-center">
+                        <button className="btn btn-circle btn-outline" onClick={() => handleCategoryPositingChange(selectedCategory, 'up')}><GrLinkNext size={15} /></button>
+                        <p className="text-sm">Next</p>
+                      </div>
+                    </div>
+
                     {/* Bookmark Display for Selected Category */}
                     {selectedCategory && selectedCategory.bookmarks &&  (
-                      <div className="flex flex-col md:flex-row justify-center">
+                      <div className="flex flex-col md:flex-row w-8/12 justify-center">
                         {selectedCategory.bookmarks.map((bookmark, index) => (                          
-                          <><div className="border-2 border-accent rounded-xl m-2 justify-center text-center p-2 w-8/12 md:w-3/12 overflow-auto">
-                            <button className="btn btn-circle btn-outline" onClick={() => handleBookmarkDelete(bookmark)}>
-                              <AiOutlineDelete />
-                            </button>
+                          <><div className="flex flex-row w-full m-2 justify-between text-center p-2 ">
                             <Link 
                               href={bookmark.url} 
                               target="_blank" 
                               key={index}>
                             <p>{bookmark.description}</p>
-                            { selectedCategory.isPrivate ?  <p className="text-sm italic"> link </p> : <p className="text-sm italic">{bookmark.url}</p> }
+                            { selectedCategory.isPrivate ?  null : <p className="text-sm italic">{bookmark.url}</p> }
                             </Link>
+                            <button className="" onClick={() => handleBookmarkDelete(bookmark)}>
+                              <AiOutlineDelete size={15} />
+                            </button>
                             </div></>
                         ))}
                       </div>
                     )}
-                    <div className="flex flex-col p-4 border-t-2 mt-10">
+                    <div className="flex flex-col p-4 border-t-2 border-accent mt-10">
 
                       
                       <h2>{selectedCategory.name} Category Options</h2>
-                      <div className="flex flex-row w-full justify-around">
-                        <div className="flex flex-col justify-center items-center">
-                          <button 
-                            className="btn btn-circle btn-outline" 
-                            onClick={() => handleCategoryPrivacyToggle(selectedCategory)}
-                          >
-                            <MdOutlinePrivacyTip />
-                            </button>
-                            <p className=''>Toggle Privacy</p>
+                      <div className="flex flex-wrap w-full justify-around">
+                        <div className="flex flex-row justify-between gap-4 my-2 items-center">
+                          {/* Position Up Button */}
+                          <div className="flex flex-col justify-center items-center text-center">
+                            <button className="btn btn-circle btn-outline" onClick={() => handleCategoryMove(selectedCategory, 'up') }><AiOutlineDelete size={15} /></button>
+                            <p className="text-sm">Move Up</p>
+                          </div>
+                          {/* Position Down Button */}
+                          <div className="flex flex-col justify-center items-center text-center">
+                            <button className="btn btn-circle btn-outline" onClick={() => handleCategoryMove(selectedCategory, 'down')}><AiOutlineDelete size={15} /></button>
+                            <p className="text-sm">Move Down</p>
+                          </div>
                         </div>
-                        <div className="flex flex-col justify-center items-center">
-                          <button className="btn btn-circle btn-outline" onClick={() => setConfirmCategoryDelete(true)}><AiOutlineDelete /></button>
-                          <p>Delete Category</p>
-                        </div>
+                        <div className="flex flex-row justify-between gap-4 my-2 items-center">
+                          {/* Privacy Button */}
+                          <div className="flex flex-col justify-center items-center text-center">
+                            <button 
+                              className="btn btn-circle btn-outline" 
+                              onClick={() => handleCategoryPrivacyToggle(selectedCategory)}
+                            >
+                              <MdOutlinePrivacyTip size={15} />
+                              </button>
+                              <p className='text-sm'>Toggle Privacy</p>
+                          </div>
+                          {/* Delete Butotn */}
+                          <div className="flex flex-col justify-center items-center text-center">
+                            <button className="btn btn-circle btn-outline" onClick={() => setConfirmCategoryDelete(true)}><AiOutlineDelete size={15} /></button>
+                            <p className="text-sm">Delete</p>
+                          </div>
+                        </div>                        
                           
                       </div>               
                     </div>               

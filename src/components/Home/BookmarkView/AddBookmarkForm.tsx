@@ -18,7 +18,7 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
     }
 
   }, [selectedCategory]);
-  
+    
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -34,8 +34,10 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
 
     if (!isExistingCategory && newCategory) {
       console.log('Adding a new category', newCategory)
+      const newPosition = profile.categories.length + 1;
+
       // Create new category with the bookmark
-      categoryToUpdate = { name: newCategory, isPrivate, bookmarks: [newBookmark] };
+      categoryToUpdate = { name: newCategory, isPrivate, bookmarks: [newBookmark], position: newPosition};
 
       // Add new category to userProfile document
       try {
