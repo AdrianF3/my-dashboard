@@ -191,15 +191,15 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
               <div className="flex flex-col p-4">
                 <h1 className="text-2xl font-bold">Bookmarks</h1>
                 <p className="text-lg text-accent-content">
-                  Welcome to your bookmarks! Here you can view and manage your bookmarks. You can create categories to organize your bookmarks and add bookmarks to each category. You can also delete categories and bookmarks.
+                  Welcome to your bookmarks! Here you can view and manage your bookmarks. Create categories to organize your bookmarks and add bookmarks to each category. You can also delete categories and bookmarks.
                 </p>
               </div>
               {/* Display Categories  */}
                 {profile && profile.categories && profile.categories.length > 0 ? (
                   <div className="border-2 border-accent rounded-xl self-center w-8/12 p-4">
-                    <h2>Categories</h2>
+                    <h2 className="text-xl font-semi-bold p-1">Categories</h2>
                     {/* Category Selector */}
-                    <div className="flex flex-wrap">
+                    <div className="flex flex-wrap justify-center md:justify-start">
                     {sortedCategories.map(category => (
                       <button 
                         key={category.name} 
@@ -226,60 +226,60 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
 
                     {/* Bookmark Display for Selected Category */}
                     {selectedCategory && selectedCategory.bookmarks &&  (
-                      <div className="flex flex-col md:flex-row w-8/12 justify-center">
-                        {selectedCategory.bookmarks.map((bookmark, index) => (                          
-                          <><div className="flex flex-row w-full m-2 justify-between text-center p-2 ">
-                            <Link 
-                              href={bookmark.url} 
-                              target="_blank" 
-                              key={index}>
-                            <p>{bookmark.description}</p>
-                            { selectedCategory.isPrivate ?  null : <p className="text-sm italic">{bookmark.url}</p> }
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full justify-center">
+                        {selectedCategory.bookmarks.map((bookmark, index) => (
+                          <div className="flex flex-col items-center mx-auto p-2" key={index}>
+                            <Link href={bookmark.url} target="_blank">
+                              <p className="text-center">
+                                <p>{bookmark.description}</p>
+                                {!selectedCategory.isPrivate && <p className="text-sm italic">{bookmark.url}</p>}
+                              </p>
                             </Link>
-                            <button className="" onClick={() => handleBookmarkDelete(bookmark)}>
+                            <button className="text-error pt-1" onClick={() => handleBookmarkDelete(bookmark)}>
                               <AiOutlineDelete size={15} />
                             </button>
-                            </div></>
+                          </div>
                         ))}
                       </div>
                     )}
-                    <div className="flex flex-col p-4 border-t-2 border-accent mt-10">
 
-                      
-                      <h2>{selectedCategory.name} Category Options</h2>
-                      <div className="flex flex-wrap w-full justify-around">
-                        <div className="flex flex-row justify-between gap-4 my-2 items-center">
-                          {/* Position Up Button */}
-                          <div className="flex flex-col justify-center items-center text-center">
-                            <button className="btn btn-circle btn-outline" onClick={() => handleCategoryMove(selectedCategory, 'up') }><AiOutlineDelete size={15} /></button>
-                            <p className="text-sm">Move Up</p>
-                          </div>
-                          {/* Position Down Button */}
-                          <div className="flex flex-col justify-center items-center text-center">
-                            <button className="btn btn-circle btn-outline" onClick={() => handleCategoryMove(selectedCategory, 'down')}><AiOutlineDelete size={15} /></button>
-                            <p className="text-sm">Move Down</p>
-                          </div>
+                    {/* Category Options */}
+                    <div className="mt-10 p-4 border-t-2 border-accent text-center">
+                      <h2 className="mb-4">{selectedCategory.name} Category Options</h2>
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                        {/* Move Up */}
+                        <div className="flex flex-col items-center">
+                          <button className="btn btn-circle btn-outline" onClick={() => handleCategoryMove(selectedCategory, 'up')}>
+                            <GrLinkPrevious size={15} />
+                          </button>
+                          <p className="text-sm">Move Up</p>
                         </div>
-                        <div className="flex flex-row justify-between gap-4 my-2 items-center">
-                          {/* Privacy Button */}
-                          <div className="flex flex-col justify-center items-center text-center">
-                            <button 
-                              className="btn btn-circle btn-outline" 
-                              onClick={() => handleCategoryPrivacyToggle(selectedCategory)}
-                            >
-                              <MdOutlinePrivacyTip size={15} />
-                              </button>
-                              <p className='text-sm'>Toggle Privacy</p>
-                          </div>
-                          {/* Delete Butotn */}
-                          <div className="flex flex-col justify-center items-center text-center">
-                            <button className="btn btn-circle btn-outline" onClick={() => setConfirmCategoryDelete(true)}><AiOutlineDelete size={15} /></button>
-                            <p className="text-sm">Delete</p>
-                          </div>
-                        </div>                        
-                          
-                      </div>               
-                    </div>               
+                        {/* Move Down */}
+                        <div className="flex flex-col items-center">
+                          <button className="btn btn-circle btn-outline" onClick={() => handleCategoryMove(selectedCategory, 'down')}>
+                            <GrLinkNext size={15} />
+                          </button>
+                          <p className="text-sm">Move Down</p>
+                        </div>
+                        {/* Toggle Privacy */}
+                        <div className="flex flex-col items-center">
+                          <button className="btn btn-circle btn-outline" onClick={() => handleCategoryPrivacyToggle(selectedCategory)}>
+                            <MdOutlinePrivacyTip size={15} />
+                          </button>
+                          <p className="text-sm">Toggle Privacy</p>
+                        </div>
+                        {/* Delete */}
+                        <div className="flex flex-col items-center">
+                          <button className="btn btn-circle btn-outline" onClick={() => setConfirmCategoryDelete(true)}>
+                            <AiOutlineDelete size={15} />
+                          </button>
+                          <p className="text-sm">Delete</p>
+                        </div>
+                      </div>
+                    </div>
+
+
+
                   </div>
                 ) : <p>No categories found</p>}                
                 <div className="flex flex-col m-4">

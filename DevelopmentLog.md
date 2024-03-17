@@ -7,7 +7,8 @@ Building simple, helpful tools to help manage life.
 
 ## Current Version 
 #### Version 0.1.8 - Started 3/15/2024 - Ended #/#/2024
-- 
+- fixed git issues and reinitialized the project
+- improved bookmark tool and button layout
 
 
 
