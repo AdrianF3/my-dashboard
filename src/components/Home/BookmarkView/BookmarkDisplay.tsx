@@ -17,6 +17,7 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
     const [selectedCategory, setSelectedCategory] = useState<BookmarkCategory>({} as BookmarkCategory);
     const [confirmCategoryDelete, setConfirmCategoryDelete] = useState(false);
     const [sortedCategories, setSortedCategories] = useState<BookmarkCategory[]>([]);
+    const [addingCategory, setAddingCategory] = useState(false);
 
     // Update selectedCategory based on user action or initial load
     useEffect(() => {
@@ -196,6 +197,8 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
               </div>
               {/* Display Categories  */}
                 {profile && profile.categories && profile.categories.length > 0 ? (
+
+                  // START OF CATEOGORYBOOKMARKDISLAY
                   <div className="border-2 border-accent rounded-xl self-center w-8/12 p-4">
                     <h2 className="text-xl font-semi-bold p-1">Categories</h2>
                     {/* Category Selector */}
@@ -208,7 +211,14 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                       >
                         {category.name }: { category.bookmarks.length}
                       </button>
-                    ))}            
+                    ))}
+                    {/* Button to add new category */}
+                    <button 
+                      className={`m-2 p-2 rounded btn btn-success`}
+                      onClick={() => setAddingCategory(true)}
+                    >
+                      Add Category
+                    </button>
                                  
                     </div>
                     <div className="flex flex-row justify-between gap-4 my-2 items-center border-b-2 border-accent pb-4">
@@ -277,22 +287,29 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                         </div>
                       </div>
                     </div>
-
-
-
                   </div>
-                ) : <p>No categories found</p>}                
-                <div className="flex flex-col m-4">
-                  {/* Add a Bookmark Form */}
-                  <AddBookmarkForm 
-                    profile={profile} 
-                    selectedCategory={selectedCategory} 
-                    
-                  />
+                  // END OF CATEOGORYBOOKMARKDISLAY
 
-                </div>
+                ) : <p>No categories found</p>}                                
 
             </div>    
+            {/* Modal for adding a new category */}
+            {addingCategory && (
+                <div className="modal modal-open">
+                    <div className="modal-box">
+                      <div className="flex flex-col">
+                        {/* Add a Bookmark Form */}
+                        <AddBookmarkForm 
+                          profile={profile} 
+                          selectedCategory={selectedCategory}    
+                          setAddingCategory={setAddingCategory}                     
+                        />
+                      </div>
+
+                    </div>
+                </div>
+            )}  
+            {/* testing a comment */}
             {/* Modal for Confirming Category Deletion */}
             {confirmCategoryDelete && (
                 <div className="modal modal-open">
@@ -312,3 +329,5 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
 };
 
 export default BookmarkDisplay;
+
+

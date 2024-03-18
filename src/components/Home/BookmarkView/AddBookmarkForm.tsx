@@ -6,7 +6,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 
 
-const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory: BookmarkCategory; }> = ({ profile, selectedCategory }) => {
+const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory: BookmarkCategory; setAddingCategory: (adding: boolean) => void }> = ({ profile, selectedCategory, setAddingCategory }) => {
   const [newBookmark, setNewBookmark] = useState<Bookmark>({ url: 'http://', description: '' });
   const [newCategory, setNewCategory] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
@@ -81,7 +81,7 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 bg-primary p-4 rounded text-center justify-center items-center">
       <h2>Add a New Bookmark</h2>
       <label htmlFor="url">Link Address</label>
       <input
@@ -110,8 +110,11 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
         placeholder="New Category (or select an existing one above)"
         value={newCategory}
         onChange={e => setNewCategory(e.target.value)}
-      />        
-      <button type="submit" className="btn btn-success">Add Bookmark</button>
+      />    
+      <div className='flex flex-wrap gap-4 justify-between'>
+        <button type="submit" className="btn btn-success">Add Bookmark</button>
+        <button type="button" onClick={() => setAddingCategory(false)} className="btn btn-danger">Cancel</button>
+      </div>    
     </form>
   );
 };
