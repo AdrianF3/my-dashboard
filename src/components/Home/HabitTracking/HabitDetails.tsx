@@ -20,6 +20,23 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);  
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // useEffect to resize window
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup function to remove event listener
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Determine the responsive width for the chart. Adjust the subtraction value based on your layout's padding/margin requirements.
+  const chartWidth = Math.max(windowWidth - 100, 300); // Ensures the chart has a minimum width of 300px
+
 console.log('periods', periods)
   useEffect(() => {
     const groupLogs = () => {
@@ -233,7 +250,7 @@ const graphData = dateRange.map(date => {
         <h3 className="text-xl font-semibold mb-2">Progress Graph</h3>
         <div style={{ width: '100%', maxWidth: '100%' }}>
         <LineChart
-          width={window.innerWidth - 100 } // Adjust margin as needed
+          width={chartWidth} // Adjust margin as needed
           height={300}
           data={graphData}
           margin={{
