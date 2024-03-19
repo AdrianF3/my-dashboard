@@ -8,13 +8,25 @@ import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { eachDayOfInterval, endOfDay } from 'date-fns';
 
+
 interface LogCountsByDate {
   [dateKey: string]: number;
 }
 
+interface GraphDataItem {
+  date: string;
+  Daily: number; // Assuming 'Daily' is a number. Adjust the type if necessary.
+  Cumulative: number;
+  Expected: number;
+  Difference: number;
+}
+
+
+
 
 const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLog: (view: 'EDIT_HABIT_LOG', habit: Habit | null, logID: string | null) => void, userID: string, handleViewDetails: () => void }> = ({ habit, viewReset, handleEditLog, userID, handleViewDetails }) => {
   const [groupedLogs, setGroupedLogs] = useState<{ [key: string]: any[] }>({});
+  const [graphData, setGraphData] = useState<GraphDataItem[]>([]);
   const [periods, setPeriods] = useState<any[]>([]);
   const [selectedPeriodLogs, setSelectedPeriodLogs] = useState<any[]>([]); // State to store logs of the selected period
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -37,7 +49,8 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   // Determine the responsive width for the chart. Adjust the subtraction value based on your layout's padding/margin requirements.
   const chartWidth = Math.max(windowWidth - 100, 300); // Ensures the chart has a minimum width of 300px
 
-console.log('periods', periods)
+
+  // Updated groupLogs function with bi-weekly logic
   useEffect(() => {
     const groupLogs = () => {
       const groups: { [key: string]: any[] } = {};
@@ -52,6 +65,11 @@ console.log('periods', periods)
             case 'weekly':
               key = format(startOfWeek(logDate), 'yyyy-MM-dd');
               break;
+            case 'bi-weekly':
+              const weekStart = startOfWeek(logDate);
+              const biWeeklyStart = weekStart.getDate() <= 15 ? set(weekStart, { date: 1 }) : set(weekStart, { date: 15 });
+              key = format(biWeeklyStart, 'yyyy-MM-dd');
+              break;
             case 'monthly':
               key = format(startOfMonth(logDate), 'yyyy-MM');
               break;
@@ -65,28 +83,29 @@ console.log('periods', periods)
         }
       });
       setGroupedLogs(groups);
-  
+
+      // Sort and set periods
       const sortedKeys = Object.keys(groups).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
       const periodsArray = sortedKeys.map(key => ({ period: key, logs: groups[key] }));
       setPeriods(periodsArray);
-  
-      // Set the most recent period logs as the selected period logs
-      // Check if there are any periods before attempting to set the selectedPeriodLogs
+
+      // Select the most recent period logs by default
       if (periodsArray.length > 0) {
-        const mostRecentPeriodLogs = periodsArray[0].logs;
-        setSelectedPeriodLogs(mostRecentPeriodLogs);
+        setSelectedPeriodLogs(periodsArray[0].logs);
       }
     };
-  
+
     groupLogs();
   }, [habit.logs, habit.frequency]);
-  
+    
 
   const totalProgress = habit.logs.reduce((acc, curr) => acc + curr.count, 0);
 
   const formattedBeginDateTime = habit.beginDateTime && habit.beginDateTime instanceof Timestamp
     ? format(habit.beginDateTime.toDate(), 'yyyy-MM-dd \'at\' hh:mm a')
     : 'Invalid date';
+
+
 
   const daysSinceBegin = habit.beginDateTime && habit.beginDateTime instanceof Timestamp
     ? differenceInCalendarDays(new Date(), habit.beginDateTime.toDate())
@@ -182,24 +201,64 @@ const logCountsByDate = habit.logs.reduce((acc: LogCountsByDate, log) => {
   return acc;
 }, {} as LogCountsByDate);
 
+const generateGraphData = () => {
+  // Calculate the start and end date for the graph based on the selected period
+  let startDate, endDate;
+  if (selectedPeriodLogs.length > 0) {
+    startDate = selectedPeriodLogs[0].dateTime.toDate(); // Assuming the first log of the period is the start
+    endDate = selectedPeriodLogs[selectedPeriodLogs.length - 1].dateTime.toDate(); // Assuming the last log is the end
+  } else {
+    return []; // Return an empty array if no logs are selected
+  }
 
-let cumulativeActual = 0; // Track cumulative progress
-const graphData = dateRange.map(date => {
-  const dateKey = format(date, 'yyyy-MM-dd');
-  const dailyActual = logCountsByDate[dateKey] || 0; // Daily progress from logs
-  cumulativeActual += dailyActual; // Update cumulative progress
-  const dayDifference = differenceInCalendarDays(endOfDay(date), startDate) + 1;
-  const expectedProgress = habit.goal * dayDifference;
-  const dailyDifference = cumulativeActual - expectedProgress; // Calculate daily difference
+  const periodLogs = selectedPeriodLogs.reduce((acc, log) => {
+    const dateKey = format(log.dateTime.toDate(), 'yyyy-MM-dd');
+    acc[dateKey] = (acc[dateKey] || 0) + log.count;
+    return acc;
+  }, {});
 
-  return {
-    date: dateKey,
-    Daily: dailyActual,
-    Cumulative: cumulativeActual,
-    Expected: expectedProgress,
-    Difference: dailyDifference, // Add daily difference to your data object
-  };
-});
+  const dateRange = eachDayOfInterval({ start: startDate, end: endDate });
+  let cumulativeActual = 0;
+  return dateRange.map(date => {
+    const dateKey = format(date, 'yyyy-MM-dd');
+    const dailyActual = periodLogs[dateKey] || 0;
+    cumulativeActual += dailyActual;
+
+    // Calculate expected progress based on the habit's frequency
+    const daysSinceBegin = differenceInCalendarDays(date, habit.beginDateTime.toDate()) + 1;
+    let expectedProgress;
+    switch (habit.frequency) {
+      case 'weekly':
+        expectedProgress = habit.goal * Math.ceil(daysSinceBegin / 7);
+        break;
+      case 'bi-weekly':
+        expectedProgress = habit.goal * Math.ceil(daysSinceBegin / 14);
+        break;
+      case 'monthly':
+        expectedProgress = habit.goal * Math.ceil(daysSinceBegin / 30);
+        break;
+      case 'daily':
+      default:
+        expectedProgress = habit.goal * daysSinceBegin;
+    }
+
+    const dailyDifference = cumulativeActual - expectedProgress;
+
+    return {
+      date: dateKey,
+      Daily: dailyActual,
+      Cumulative: cumulativeActual,
+      Expected: expectedProgress,
+      Difference: dailyDifference,
+    };
+  });
+};
+
+
+useEffect(() => {
+  setGraphData(generateGraphData());
+}, [selectedPeriodLogs, habit.frequency, habit.goal, habit.beginDateTime]);
+
 
 
   
@@ -224,16 +283,13 @@ const graphData = dateRange.map(date => {
         { !confirmDelete ? <button className="btn btn-error" onClick={() => setConfirmDelete(true)}>Delete Habit?</button>  : 
         <button className="btn btn-error" onClick={() => deleteHabit()}>Confirm Deletion</button> }
       </div>
-
-      <div className='bg-primary/70 text-primary-content p-2 rounded-xl my-4 overflow-auto' style={{ maxHeight: '50vh' }}>
-        <h3 className="text-xl font-semibold mb-2 text-center pb-2">Logs for Selected Period</h3>
-        <div className='flex flex-wrap gap-4 justify-center'>{renderSelectedPeriodLogs()}</div>
-      </div>
+      
+      
 
 
-
+      {/* Recent Data Section */}
       <div className='h-fit bg-secondary/70 text-secondary-content p-2 rounded-xl my-4'>
-        <h3 className="text-xl font-semibold mb-2">Trending Data:</h3>
+        <h3 className="text-xl font-semibold mb-2">Recent Data:</h3>
         <div className='flex flex-row w-full overflow-auto gap-4'>
           {periods.map((period, index) => (
             <div key={index} className="card w-fit bg-base-100 shadow-xl mb-2 p-4 cursor-pointer" onClick={() => handlePeriodClick(period.logs)}>
@@ -244,7 +300,15 @@ const graphData = dateRange.map(date => {
             </div>
           ))}
         </div>
-      </div>      
+      </div>    
+
+      {/* Display Logs for selected Period */}
+      <div className='bg-primary/70 text-primary-content p-2 rounded-xl my-4 overflow-auto' style={{ maxHeight: '50vh' }}>
+        <h3 className="text-xl font-semibold mb-2">Logs for Selected Period</h3>
+        <div className='flex flex-wrap gap-4 justify-center'>{renderSelectedPeriodLogs()}</div>
+      </div>
+
+
       {/* Graph showing expected vs. actual progress */}
       <div className="my-4">
         <h3 className="text-xl font-semibold mb-2">Progress Graph</h3>

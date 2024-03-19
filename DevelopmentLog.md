@@ -11,6 +11,7 @@ Building simple, helpful tools to help manage life.
 - improved bookmark tool and button layout
 - fixed git issues again
 - beginning to look at issues with the graph of the habit tracker
+- improving habit tracker and how period date are displayed and calculated
 
 
 

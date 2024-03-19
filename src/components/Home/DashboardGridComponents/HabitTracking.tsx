@@ -11,10 +11,10 @@ import { db } from "../../../firebaseConfig";
 import { collection, doc, query, onSnapshot } from "firebase/firestore";
 import EditHabitTrackingForm from "../HabitTracking/EditHabitTrackingForm";
 
-type ViewMode = 'ADD_HABIT' | 'TRACK_HABIT' | 'HABIT_DETAILS' | 'EDIT_HABIT_LOG';
+type ViewMode = 'ADD_HABIT' | 'TRACK_HABIT' | 'HABIT_DETAILS' | 'EDIT_HABIT_LOG' | null;
 
 const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
-    const [currentView, setCurrentView] = useState<ViewMode>('ADD_HABIT');
+    const [currentView, setCurrentView] = useState<ViewMode>(null);
     const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
     const [ habitLogIDToEdit, setHabitLogIDToEdit ] = useState<string | null>(null);
     const [habits, setHabits] = useState<Habit[]>([]);
@@ -57,15 +57,25 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
 
 
     const viewReset = () => {
-        setCurrentView('ADD_HABIT');
+        setCurrentView(null);
         setSelectedHabit(null);
     }
 
     return (
         <div className="flex flex-col gap-4 justify-around rounded border-2 border-accent self-center bg-primary text-primary-content p-4">
-            <div>
+            <div className="flex flex-col w-8/12 self-center">
                 <h1 className="text-2xl font-bold">Habit Tracking</h1>
                 <p className="text-md">Track your habits with goals and frequency to monitor your progress and maintain consistency. Set specific objectives for each habit to achieve your personal development goals.</p>
+                <div className="flex justify-end">
+                    <button
+                        className="btn btn-accent justify-end"
+                        onClick={() => handleViewChange('ADD_HABIT', null)}
+                    >
+                        Add New Habit
+                    </button>
+
+                </div>
+                {/* Button to set currentView to 'ADD_HABIT' */}
             </div>
             <div>
                 <h2 className="text-xl font-bold">Your Habits</h2>
