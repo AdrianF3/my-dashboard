@@ -7,6 +7,9 @@ import { db } from '../../../firebaseConfig';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { eachDayOfInterval, endOfDay } from 'date-fns';
+import DetailsOverview from './HabitDetails/DetailsOverview';
+import RecentLogData from './HabitDetails/RecentLogData';
+import HabitGraphData from './HabitDetails/HabitGraphData';
 
 
 interface LogCountsByDate {
@@ -24,14 +27,13 @@ interface GraphDataItem {
 
 
 
-const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLog: (view: 'EDIT_HABIT_LOG', habit: Habit | null, logID: string | null) => void, userID: string, handleViewDetails: () => void }> = ({ habit, viewReset, handleEditLog, userID, handleViewDetails }) => {
+const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLog: (view: string, habit: Habit | null, logID: string | null) => void, userID: string, handleViewDetails: () => void }> = ({ habit, viewReset, handleEditLog, userID, handleViewDetails }) => {
   const [groupedLogs, setGroupedLogs] = useState<{ [key: string]: any[] }>({});
   const [graphData, setGraphData] = useState<GraphDataItem[]>([]);
   const [periods, setPeriods] = useState<any[]>([]);
   const [selectedPeriodLogs, setSelectedPeriodLogs] = useState<any[]>([]); // State to store logs of the selected period
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);  
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);    
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // useEffect to resize window
@@ -115,20 +117,7 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   const progressPercentage = ((totalProgress / cumulativeGoal) * 100).toFixed(2);
   const difference = totalProgress - cumulativeGoal;
 
-  // Delete Habit Function
-  const deleteHabit = async () => {
-    const habitRef = doc(db, "userProfile", userID, "userHabits", habit.id); // Adjust path as necessary
-
-    try {
-      await deleteDoc(habitRef);
-      console.log("Habit deleted successfully");
-      // Optionally handle any additional logic after deleting the habit
-    } catch (error) {
-      console.error("Error deleting habit:", error);
-    }
-    setConfirmDelete(false);
-    viewReset();
-  };
+  
 
   // Delete Log Function
   const deleteLog = async (logId: string | null) => {    
@@ -163,31 +152,7 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
     setSelectedPeriodLogs(sortedLogs); // Update the state with the sorted logs
   };
 
-  // Render logs for the selected period
-  const renderSelectedPeriodLogs = () => (
-    selectedPeriodLogs.length > 0 ? selectedPeriodLogs.map((log, index) => (
-      <div key={index} className="flex flex-col border-2 border-accent rounded-xl w-fit h-fit mb-2 p-2">
-        <div className="text-sm font-medium">Date: {format(log.dateTime.toDate(), 'yyyy-MM-dd \'at\' hh:mm a')}</div>
-        <div className="text-sm">Count: {log.count}</div>
-        <div className="text-sm italic">Note: {log.note}</div>
-        {/* Buttons */}
-        <div className="flex justify-end mt-2">
-          <button 
-            className="btn btn-xs btn-secondary"
-            onClick={() => handleEditLog('EDIT_HABIT_LOG', habit, log.id)}
-          >
-            Edit
-          </button>
-          <button 
-            className="btn btn-xs btn-error ml-2"
-            onClick={() => openDeleteModal(log.id)}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    )) : <p>No logs for this period.</p>
-  );
+  
 
   // Assuming habit.beginDateTime is the starting point and habit.logs contain the logs
 const startDate = habit.beginDateTime.toDate();
@@ -265,80 +230,36 @@ useEffect(() => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
-      <h2 className="text-3xl font-bold mb-4">{habit.title}</h2>
-      <p className="text-lg mb-2">Started: {formattedBeginDateTime}</p>
-      <p className="text-lg mb-2">Frequency: {habit.frequency}</p>      
-      <p className="text-lg mb-4">Goal: {habit.goal}</p>
-      <div className="w-8/12 bg-gray-200 rounded-full dark:bg-gray-700 my-2 mx-auto">
-        <div className="bg-blue-600 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full" style={{ width: `${progressPercentage}%` }}>
-          {progressPercentage}%
-        </div>
-      </div>
-      <div className='flex flex-col justify-center items-center my-4'>
-        <p className="text-lg uppercase">Overall Progress</p>
-        <p className="">{totalProgress} of {cumulativeGoal} | ({difference})</p>
-      </div>      
 
-      <div className='flex flex-row justify-end'>      
-        { !confirmDelete ? <button className="btn btn-error" onClick={() => setConfirmDelete(true)}>Delete Habit?</button>  : 
-        <button className="btn btn-error" onClick={() => deleteHabit()}>Confirm Deletion</button> }
-      </div>
+      {/* Details Overview */}      
+      <DetailsOverview 
+        habit={habit}
+        formattedBeginDateTime={formattedBeginDateTime}
+        progressPercentage={Number(progressPercentage)}
+        totalProgress={totalProgress}
+        cumulativeGoal={cumulativeGoal}
+        difference={difference}
+        viewReset={viewReset}
+        userID={userID}
+        />      
       
-      
-
-
       {/* Recent Data Section */}
-      <div className='h-fit bg-secondary/70 text-secondary-content p-2 rounded-xl my-4'>
-        <h3 className="text-xl font-semibold mb-2">Recent Data:</h3>
-        <div className='flex flex-row w-full overflow-auto gap-4'>
-          {periods.map((period, index) => (
-            <div key={index} className="card w-fit bg-base-100 shadow-xl mb-2 p-4 cursor-pointer" onClick={() => handlePeriodClick(period.logs)}>
-              <div className="card-body">
-                <h4 className="card-title">Period: {period.period}</h4>
-                <p>Total Counts: {period.logs.reduce((acc: number, curr: any) => acc + curr.count, 0)}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>    
-
-      {/* Display Logs for selected Period */}
-      <div className='bg-primary/70 text-primary-content p-2 rounded-xl my-4 overflow-auto' style={{ maxHeight: '50vh' }}>
-        <h3 className="text-xl font-semibold mb-2">Logs for Selected Period</h3>
-        <div className='flex flex-wrap gap-4 justify-center'>{renderSelectedPeriodLogs()}</div>
-      </div>
-
+      <RecentLogData 
+        periods={periods}
+        selectedPeriodLogs={selectedPeriodLogs}
+        habit={habit}
+        handlePeriodClick={handlePeriodClick}
+        handleEditLog={handleEditLog}
+        openDeleteModal={openDeleteModal}
+        />
 
       {/* Graph showing expected vs. actual progress */}
-      <div className="my-4">
-        <h3 className="text-xl font-semibold mb-2">Progress Graph</h3>
-        <div style={{ width: '100%', maxWidth: '100%' }}>
-        <LineChart
-          width={chartWidth} // Adjust margin as needed
-          height={300}
-          data={graphData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}          
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="Expected" stroke="#8884d8" activeDot={{ r: 8 }} />          
-          <Line type="monotone" dataKey="Cumulative" stroke="#82ca9d" />
-          <Line type="monotone" dataKey="Daily" stroke="#ffc658" />
-          <Line type="monotone" dataKey="Difference" stroke="#ff7300" />
-
-
-        </LineChart>
-        </div>
-      </div>
-
+      <HabitGraphData
+        chartWidth={chartWidth}
+        graphData={graphData}
+      />
+      
+      {/* Delete individual Logs */}
       {isDeleteModalOpen && (
         <div className="modal modal-open">
           <div className="modal-box">
