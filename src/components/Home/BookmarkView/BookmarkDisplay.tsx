@@ -238,14 +238,14 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                     {selectedCategory && selectedCategory.bookmarks &&  (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full justify-center">
                         {selectedCategory.bookmarks.map((bookmark, index) => (
-                          <div className="flex flex-col items-center btn btn-outline mx-auto p-2" key={index}>
+                          <div className="flex flex-col items-center btn btn-outline p-2" key={index}>
                             <Link href={bookmark.url} target="_blank">
                               <p className="text-center">
                                 <p>{bookmark.description}</p>
                                 {!selectedCategory.isPrivate && <p className="text-sm italic">{bookmark.url}</p>}
                               </p>
                             </Link>
-                            <button className="text-error m-2 p-2 bg-accent/40 hover:bg-accent rounded-xl" onClick={() => handleBookmarkDelete(bookmark)}>
+                            <button className="text-error m-2 p-2 bg-accent/40 hover:bg-error hover:text-primary-content hover:text-semibold rounded-xl" onClick={() => handleBookmarkDelete(bookmark)}>
                               <AiOutlineDelete size={15} />
                             </button>
                           </div>

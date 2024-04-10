@@ -39,7 +39,8 @@ const HabitGraphData: React.FC<HabitGraphDataProps> = ({ chartWidth, graphData }
                 key={key}
                 type="monotone"
                 dataKey={key}
-                stroke={colors[key]}
+                // stroke={colors[key]}
+                stroke={colors[key as keyof typeof colors]}
                 activeDot={{ r: 8 }}
             />
         ));
