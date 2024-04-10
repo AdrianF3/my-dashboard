@@ -27,7 +27,7 @@ interface GraphDataItem {
 
 
 
-const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLog: (view: string, habit: Habit | null, logID: string | null) => void, userID: string, handleViewDetails: () => void }> = ({ habit, viewReset, handleEditLog, userID, handleViewDetails }) => {
+const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLog: (view: any, habit: Habit | null, logID: string | null) => void, userID: string, handleViewDetails: () => void }> = ({ habit, viewReset, handleEditLog, userID, handleViewDetails }) => {
   const [groupedLogs, setGroupedLogs] = useState<{ [key: string]: any[] }>({});
   const [graphData, setGraphData] = useState<GraphDataItem[]>([]);
   const [periods, setPeriods] = useState<any[]>([]);
@@ -35,6 +35,7 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [logIdToDelete, setLogIdToDelete] = useState<string | null>(null);    
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  console.log('habit', habit)
 
   // useEffect to resize window
   useEffect(() => {
@@ -93,6 +94,7 @@ const HabitDetails: React.FC<{ habit: Habit; viewReset: () => void; handleEditLo
 
       // Select the most recent period logs by default
       if (periodsArray.length > 0) {
+        console.log('periodsArray', periodsArray)
         setSelectedPeriodLogs(periodsArray[0].logs);
       }
     };
@@ -167,27 +169,26 @@ const logCountsByDate = habit.logs.reduce((acc: LogCountsByDate, log) => {
 }, {} as LogCountsByDate);
 
 const generateGraphData = () => {
-  // Calculate the start and end date for the graph based on the selected period
-  let startDate, endDate;
-  if (selectedPeriodLogs.length > 0) {
-    startDate = selectedPeriodLogs[0].dateTime.toDate(); // Assuming the first log of the period is the start
-    endDate = selectedPeriodLogs[selectedPeriodLogs.length - 1].dateTime.toDate(); // Assuming the last log is the end
-  } else {
-    return []; // Return an empty array if no logs are selected
-  }
-
-  const periodLogs = selectedPeriodLogs.reduce((acc, log) => {
-    const dateKey = format(log.dateTime.toDate(), 'yyyy-MM-dd');
-    acc[dateKey] = (acc[dateKey] || 0) + log.count;
-    return acc;
-  }, {});
-
+  // Calculate the start and end date for the graph based on the habit's beginDateTime and the last log entry 
+  const startDate = habit.beginDateTime.toDate();
+  const endDate = habit.logs.length > 0 ? habit.logs[habit.logs.length - 1].dateTime.toDate() : new Date();
   const dateRange = eachDayOfInterval({ start: startDate, end: endDate });
+  
   let cumulativeActual = 0;
+  
   return dateRange.map(date => {
-    const dateKey = format(date, 'yyyy-MM-dd');
-    const dailyActual = periodLogs[dateKey] || 0;
-    cumulativeActual += dailyActual;
+    const dateKey = format(date, 'yyyy-MM-dd');    
+    let dailyActual = 0
+    // for each element in the habit.logs array, convert the dateTime property to a string in the format 'yyyy-MM-dd'
+    // then compare use the dateKey to compare with the date string, if they match, return the count property and increment the cumulativeActual by using hte habit.logs.count property
+
+    habit.logs.forEach(log => {
+      if (format(log.dateTime.toDate(), 'yyyy-MM-dd') === dateKey) {
+        cumulativeActual += log.count;
+        dailyActual += log.count;
+      }
+    }
+    );    
 
     // Calculate expected progress based on the habit's frequency
     const daysSinceBegin = differenceInCalendarDays(date, habit.beginDateTime.toDate()) + 1;

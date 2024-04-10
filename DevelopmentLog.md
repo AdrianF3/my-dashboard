@@ -6,18 +6,23 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.61 - Started 3/15/2024 - Ended #/#/2024
+#### Version 0.1.62 - Started 4/11/2024 - Ended #/#/2024
+- 
+
+
+
+### Previous Version History
+
+#### Version 0.1.62 - Started 3/15/2024 - Ended 4/10/2024
 - fixed git issues and reinitialized the project
 - improved bookmark tool and button layout
 - fixed git issues again
 - beginning to look at issues with the graph of the habit tracker
 - improving habit tracker and how period date are displayed and calculated
 - Refactoring Habit Details to smaller more concise components
+- minor fixes to how habit data is displayed as well as bookmark button layouts
 
 
-
-
-### Previous Version History
 #### Version 0.1.6 - Started 1/23/2024 - Ended 3/15/2024
 - **Fixed** the issue where the application was not recognizing `src/pages/index.tsx` as the homepage due to incorrect file structure. Moved the file from `src/app/pages/index.tsx` to `src/pages/index.tsx` to align with Next.js conventions.
 - Implemented - DaisyUI and Firebase to begin the backend Integration.
