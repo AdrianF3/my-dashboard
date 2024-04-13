@@ -18,9 +18,11 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
     }
 
   }, [selectedCategory]);
+  console.log('newCategory', newCategory)
     
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {    
     e.preventDefault();
+    console.log('newBookmark', newBookmark)
 
     if (!profile || !profile.categories) return;
 
@@ -54,17 +56,25 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
     } else if (isExistingCategory) {
       console.log('Adding a bookmark to an existing category', newCategory)
       // Add bookmark to existing category
-      categoryToUpdate = profile.categories.find(category => category.name === selectedCategory.name);
+      // categoryToUpdate = profile.categories.find(category => category.name === selectedCategory.name);
+      categoryToUpdate = profile.categories.find(category => category.name === newCategory);
+      console.log('categoryToUpdate', categoryToUpdate)
       if (categoryToUpdate) {
         try {
           const userProfileRef = doc(db, 'userProfile', profile.uid);
           const updatedCategories = profile.categories.map(category => {
-            if (category.name === selectedCategory.name) {
+            // if (category.name === selectedCategory.name) {
+            if (category.name === newCategory) {
               return { ...category, bookmarks: [...category.bookmarks, newBookmark] };
             }
             return category;
           });
-          await updateDoc(userProfileRef, { categories: updatedCategories });
+          await updateDoc(userProfileRef, { categories: updatedCategories }).then(() => {
+            console.log('Bookmark added to existing category');
+            setNewBookmark({ url: 'http://', description: '' });
+            setNewCategory('');
+            setIsPrivate(false);    
+          });
 
         } catch (error) {
           console.error('Error adding bookmark to existing category:', error);        
@@ -74,10 +84,6 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
 
     
     // Reset form
-    setNewBookmark({ url: 'http://', description: '' });
-    setNewCategory('');
-    setIsPrivate(false);
-    // setSelectedCategory(profile.categories[0].name);
   };
 
   return (
