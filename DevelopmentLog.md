@@ -6,8 +6,8 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.64 - Started 4/11/2024 - Ended 
-- 
+#### Version 0.1.64 - Started 4/11/2024 - Ended 4/21/2024
+- Adding a hero section to the homepage 
 
 
 

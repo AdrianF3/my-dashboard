@@ -18,6 +18,7 @@ import LoginForm from '@/components/Home/DashboardGridComponents/LoginForm';
 import RecipesDisplay from '@/components/Home/RecipeView/RecipesDisplay';
 import HabitTracking from '@/components/Home/DashboardGridComponents/HabitTracking';
 import BookmarkDisplay from '@/components/Home/BookmarkView/BookmarkDisplay';
+import HeroHighlight from '@/components/Home/DashExplainer/HeroHighlight';
 
 interface IndexPageProps {
     authenticated: boolean;
@@ -168,6 +169,7 @@ const IndexPage: React.FC = ({  }) => {
         // Instead of redirecting, render LoginComponent and RegisterComponent        
         return (<>
             <HeaderNavigationBar />
+            <HeroHighlight />
             <div className="flex flex-col bg-secondary/30 items-center justify-center min-h-screen py-12">
                 <LoginForm />                    
             </div>
