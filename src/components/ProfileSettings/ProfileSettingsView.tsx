@@ -180,6 +180,17 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                 }
             </div>
 
+            {/* Input for Progress Equals Section */}
+            {/* <div className='rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4 mt-10'>
+                <label className="label label-accent">Progress Equals</label>
+                <input 
+                    type="text" 
+                    placeholder="Enter your progress equals" 
+                    value={profile?.progressEquals || "Progress Equals Not Found"} 
+                    className="input input-accent w-full max-w-xs"
+                />
+            </div> */}
+
             {/* Input for changing zipcode */}
             <div className='rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4 mt-10'>
                 <label className="label label-accent">Zipcode</label>

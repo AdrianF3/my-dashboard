@@ -172,8 +172,8 @@ const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
                         </div>
                     </div>
                     {/* Temp Text Section */}
-                    <div className='flex flex-col sm:w-full md:w-1/3'>   
-                        <h2 className="text-3xl">Progress Equals</h2>
+                    <div className='flex flex-col sm:w-full md:w-1/3 text-center'>   
+                        {/* <h2 className="text-3xl">Progress Equals</h2>
                         <ul>
                             <li>job applications</li>
                             <li>healthy eating</li>
@@ -196,7 +196,7 @@ const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
                             <li>smoking all day</li>
                             <li>binge eating</li>
                             <li>comfort eating</li>                            
-                        </ul>
+                        </ul> */}
                     </div>
                     {/* Weather Section */}
                     <div className={`${backgroundClass} text-center p-2 h-fit rounded-xl shadow-primary-content shadow-md sm:w-full md:w-1/3`}>
