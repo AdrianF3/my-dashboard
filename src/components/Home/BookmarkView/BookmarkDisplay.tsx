@@ -211,14 +211,14 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                       >
                         {category.name }: { category.bookmarks.length}
                       </button>
-                    ))}
+                    ))}  
                     {/* Button to add new category */}
                     <button 
                       className={`m-2 p-2 rounded btn btn-success`}
                       onClick={() => setAddingCategory(true)}
                     >
                       Add Bookmark
-                    </button>
+                    </button>                     
                                  
                     </div>
                     <div className="flex flex-row justify-between gap-4 my-2 items-center border-b-2 border-accent pb-4">
@@ -290,7 +290,16 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                   </div>
                   // END OF CATEOGORYBOOKMARKDISLAY
 
-                ) : <p>No categories found</p>}                                
+                ) : <><p>No categories found</p>
+                {/* Button to add new category */}
+                <button 
+                  className={`m-2 p-2 rounded btn btn-success`}
+                  onClick={() => setAddingCategory(true)}
+                >
+                  Add Bookmark
+                </button>                                
+                </>
+              } 
 
             </div>    
             {/* Modal for adding a new category */}

@@ -84,6 +84,7 @@ const AddBookmarkForm: React.FC<{ profile: UserProfile | null; selectedCategory:
 
     
     // Reset form
+    setAddingCategory(false);
   };
 
   return (
