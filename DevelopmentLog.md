@@ -9,6 +9,8 @@ Building simple, helpful tools to help manage life.
 #### Version 0.1.64 - Started 4/11/2024 - Ended 4/21/2024
 - Adding a hero section to the homepage 
 - Adding images to the homepage and demo content
+- Homepage - if user is not logged in, hide the top navigation
+- AuthComponent Logic - when signing up, proplery create user profile in the database
 
 
 

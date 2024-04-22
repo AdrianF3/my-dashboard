@@ -67,6 +67,10 @@ const IndexPage: React.FC = ({  }) => {
         "sunset",
       ];
 
+
+    console.log('user', user)
+
+
     // Set the theme on initial load
     React.useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -160,7 +164,6 @@ const IndexPage: React.FC = ({  }) => {
         }
     };
 
-
     if (authLoading) {
         return <div>Loading...</div>; // Or any other loading state you prefer
     }        
@@ -168,13 +171,18 @@ const IndexPage: React.FC = ({  }) => {
     if (!authenticated) {
         // Instead of redirecting, render LoginComponent and RegisterComponent        
         return (<>
-            <HeaderNavigationBar />
+        <div className=''> 
+
+            { !user ? null : <HeaderNavigationBar /> }
             <HeroHighlight />
             <div className="flex flex-col bg-secondary/30 items-center justify-center min-h-screen py-12">
                 <LoginForm />                    
             </div>
+        </div>
         </>);
-    }
+    }    
+
+    
 
     return (
         <>            
@@ -229,7 +237,7 @@ const IndexPage: React.FC = ({  }) => {
                     
                 </section>
                 <div className='flex flex-col justify-center text-black text-center'>
-                    <p>Version 0.1.63</p>
+                    <p>Version 0.1.64</p>
                 </div>
             </section>
         </>
