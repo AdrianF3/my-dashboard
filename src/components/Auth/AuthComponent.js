@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import '../../firebaseConfig'; // Ensure Firebase is initialized
-import { createNewUserProfile } from '../../types/UserProfile.types';
+import { createNewUserProfile, resetDemoUserContent } from '../../types/UserProfile.types';
 
 const AuthComponent = () => {
   const [email, setEmail] = useState('');
@@ -26,6 +26,8 @@ const AuthComponent = () => {
 
   const handleSignIn = async () => {
     try {
+      
+
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log('Signed In', userCredential.user);
     } catch (error) {

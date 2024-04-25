@@ -6,6 +6,7 @@ import Dashboard from '@/components/Home/DashboardGridComponents/Dashboard';
 import useUserProfile from '../hooks/useUserProfile';
 import ProfileSettingsView from '@/components/ProfileSettings/ProfileSettingsView';
 import { useAuth } from '../contexts/AuthContext'; // Adjust the path according to your project structure
+import { getFirestore, setDoc, doc } from 'firebase/firestore';
 
 
 // Icons import might remain unchanged
@@ -19,6 +20,7 @@ import RecipesDisplay from '@/components/Home/RecipeView/RecipesDisplay';
 import HabitTracking from '@/components/Home/DashboardGridComponents/HabitTracking';
 import BookmarkDisplay from '@/components/Home/BookmarkView/BookmarkDisplay';
 import HeroHighlight from '@/components/Home/DashExplainer/HeroHighlight';
+import { resetDemoUserContent } from '@/types/UserProfile.types';
 
 interface IndexPageProps {
     authenticated: boolean;
@@ -68,9 +70,6 @@ const IndexPage: React.FC = ({  }) => {
       ];
 
 
-    console.log('user', user)
-
-
     // Set the theme on initial load
     React.useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -98,9 +97,9 @@ const IndexPage: React.FC = ({  }) => {
         if (currentView === "dashboard") {
             // Default Loading
             if (loading) return <>
-            <div className='w-full h-full flex justify-center align-center self-center'>
+            <div className='w-full h-full flex justify-center align-center self-center m-auto text-primary-content text-2xl font-medium'>
                 <span className="loading loading-spinner text-primary"></span>
-                <div>Loading...</div>
+                <div className='p-2'>Loading...</div>
             </div>
             </>
             // Error
@@ -133,16 +132,9 @@ const IndexPage: React.FC = ({  }) => {
                 return (
                     <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
                         <CgCalendarDates />
-                        <p className="text-primary-content font-bold text-lg">Timelines*</p>
+                        <p className="text-primary-content font-bold text-lg">Timelines *COMING SOON*</p>
                     </div>
-                );
-            case "to-do":
-                return (
-                    <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
-                        <LuListTodo />
-                        <p className="text-primary-content font-bold text-lg">To Do*</p>
-                    </div>
-                );
+                );            
             case "habit-tracking":
                 return (
                     <HabitTracking profile={profile} />
@@ -151,7 +143,7 @@ const IndexPage: React.FC = ({  }) => {
                 return (
                     <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
                         <BiMoneyWithdraw />
-                        <p className="text-primary-content font-bold text-lg">Budget*</p>
+                        <p className="text-primary-content font-bold text-lg">Budget *COMING SOON*</p>
                     </div>
                 );
             case "profile-settings":
@@ -159,13 +151,38 @@ const IndexPage: React.FC = ({  }) => {
                     <ProfileSettingsView profile={profile} />
                 </>
                 );
+            case "loading":
+                return (<>
+                    <div className='m-auto font-medium'>Loading...</div>
+                </>)
             default:
                 return null;
         }
     };
 
+    const handleResetDemoUserContent = async() => {        
+        console.log('Demo Content Reset Beginning')
+        setCurrentView('loading')
+        const demoContent = resetDemoUserContent()
+        // set document to replace the document in the userProfile collection, with the id, demoContent.uid
+        const db = getFirestore();
+        const userDocRef = doc(db, 'userProfile', demoContent.uid)
+        try {
+            await setDoc(userDocRef, demoContent)
+            console.log('Demo Content Reset Complete')          
+        } catch (error) {
+            console.log('error', error)
+        }
+        
+        setCurrentView('dashboard')
+        }
+
+    
+
+
+
     if (authLoading) {
-        return <div>Loading...</div>; // Or any other loading state you prefer
+        return <div className='justify-self-center m-auto font-medium'>Loading...</div>; // Or any other loading state you prefer
     }        
 
     if (!authenticated) {
@@ -227,17 +244,25 @@ const IndexPage: React.FC = ({  }) => {
                     <div className="rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleViewChange('profile-settings')}>
                         <CgProfile />
                         <p className="text-primary-content font-bold text-lg">Profile & Settings</p>
-                    </div>
+                    </div>                    
+                    {/* if demo user logged in, display button to reset demo content */}
+                    {profileUID === 'E2eVDaRt1lUPaPO2pTClHUTHhT13' ? <>
+                        <div className="rounded-lg bg-accent text-accent-content flex flex-row justify-center items-center gap-4 p-4" onClick={() => handleResetDemoUserContent()}>
+                            <CgProfile />
+                            <p className="text-primary-content font-bold text-lg">Reset Demo Profile Content</p>
+                        </div>
+                    </> : null }
+                    
                     
 
                 </div>
                 {/* Section to display selected content */}
-                <section className="self-center w-full h-full m-4 p-4">
+                <section className="self-center w-full h-full m-auto text-primary-content p-4">
                     {renderSelectedView()}
                     
                 </section>
-                <div className='flex flex-col justify-center text-black text-center'>
-                    <p>Version 0.1.64</p>
+                <div className='flex flex-col font-medium justify-center text-black text-center'>
+                    <p>Version 0.1.65</p>
                 </div>
             </section>
         </>
