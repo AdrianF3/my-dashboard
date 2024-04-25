@@ -84,21 +84,38 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
     }
 
     //function to update the profile zipcode by using zipcode state
-    const handleZipcodeChange = () => {
+    const handleZipcodeChange = async () => {
         // return if profile is empty
         if (!profile) return;
 
-        // update the profile with the new zipcode
-        const updatedProfile = { ...profile, zipCode: zipcode };
-        // save the updated profile to firestore
-        console.log('updatedProfile', updatedProfile)
-        // update gcp firestore
-        const profileRef = doc(db, 'userProfile', profile.uid);
-        updateDoc(profileRef, updatedProfile).then(() => {
-          console.log('Profile updated successfully');
-        }).catch(error => {
-          console.error('Error updating profile:', error);
-        });
+        // retrieve location data using zipcode API else return        
+        const api_key = process.env.NEXT_PUBLIC_ZIPCODE_API;
+        const apiUrl = `https://www.zipcodeapi.com/rest/${api_key}/info.json/${zipcode}/degrees`;
+        console.log('apiUrl', apiUrl)
+
+        try {
+          const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch location data');
+            }
+            const data = await response.json();
+            const { city, state, timezone } = data;
+            const locationData = { city, state, timezoneAbr: timezone.abbreviation, isDst: timezone.is_dst };
+            const updatedProfile = { ...profile, zipCode: zipcode, locationData };
+            // save the updated profile to firestore
+            console.log('updatedProfile', updatedProfile)
+            // update gcp firestore
+            const profileRef = doc(db, 'userProfile', profile.uid);
+            updateDoc(profileRef, updatedProfile)
+
+
+        } catch (error) {
+          console.log('error', error)
+        }        
+
+        
+
+        
     }
 
     //function to update the profile bio by using aboutMe state
@@ -194,6 +211,7 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
             {/* Input for changing zipcode */}
             <div className='rounded-lg bg-primary text-primary-content flex flex-row justify-center items-center gap-4 p-4 mt-10'>
                 <label className="label label-accent">Zipcode</label>
+              <div className="flex-col">
                 <input 
                     type="text" 
                     placeholder="Enter your zipcode" 
@@ -201,6 +219,9 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                     onChange={(e) => setZipcode(e.target.value)}
                     className="input input-accent w-full max-w-xs"
                 />
+                { profile?.locationData.city ? <p className="">{profile.locationData.city}, {profile.locationData.state}</p> : null}
+
+              </div>
                 {/* only show button if profile.zipcode != zipcode state */}
                 { profile?.zipCode === zipcode ? null : 
                 <button 

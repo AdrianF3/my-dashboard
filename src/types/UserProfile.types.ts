@@ -7,6 +7,13 @@ export interface UserProfile {
     email: string;
     bio: string;
     theme: string;
+    locationData:
+    {
+        city: string;
+        state: string;
+        timezoneAbr: string;
+        isDst: boolean;
+    };
     zipCode: string;
     recipes: Recipe[];
     categories: BookmarkCategory[];
@@ -22,7 +29,13 @@ export function createNewUserProfile(uid: string, email: string): UserProfile {
         email: email,
         bio: "Default bio.",
         theme: "nord",
-        zipCode: "80014",
+        locationData: {
+            city: "Denver",
+            state: "CO",
+            timezoneAbr: "MDT",
+            isDst: false
+        },
+        zipCode: "80112",
         recipes: [],
         categories: []
     };
@@ -38,7 +51,13 @@ export function resetDemoUserContent(): UserProfile {
         email: 'Demo@dash.afwebdev.com',
         bio: "Default bio goes here.",
         theme: "nord",
-        zipCode: "80014",
+        locationData: {
+            city: "Denver",
+            state: "CO",
+            timezoneAbr: "MDT",
+            isDst: false
+        },
+        zipCode: "80112",
         recipes: [
             {
                 category: 'Main Course',
