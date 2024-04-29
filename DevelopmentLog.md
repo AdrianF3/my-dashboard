@@ -8,6 +8,7 @@ Building simple, helpful tools to help manage life.
 ## Current Version 
 #### Version 0.1.66 - Started 4/25/2024 - Ended ###
 - A: Began work of integrating zipCodeAPI to update automatically based on zipcode updating
+- minor fix to demo password function
 
 
 ### Previous Version History

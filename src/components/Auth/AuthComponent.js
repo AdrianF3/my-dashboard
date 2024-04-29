@@ -82,7 +82,7 @@ const AuthComponent = () => {
         className="btn btn-neutral mt-4 text-accent"
         onClick={() => {
           setEmail('demo@dash.afwebdev.com');
-          setPassword('demo1234');
+          setPassword('demo123');
         }}
       >
         Load Demo Account
