@@ -6,9 +6,10 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.66 - Started 4/25/2024 - Ended ###
+#### Version 0.1.65B - Started 4/25/2024 - Ended 5/4/24
 - A: Began work of integrating zipCodeAPI to update automatically based on zipcode updating
 - minor fix to demo password function
+- Fixing the homepage layout issue with exceeding screen size
 
 
 ### Previous Version History

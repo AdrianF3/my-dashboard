@@ -188,7 +188,7 @@ const IndexPage: React.FC = ({  }) => {
     if (!authenticated) {
         // Instead of redirecting, render LoginComponent and RegisterComponent        
         return (<>
-        <div className=''> 
+        <div className='flex flex-col w-screen bg-emerald-800/40'>
 
             { !user ? null : <HeaderNavigationBar /> }
             <HeroHighlight />
@@ -262,7 +262,7 @@ const IndexPage: React.FC = ({  }) => {
                     
                 </section>
                 <div className='flex flex-col font-medium justify-center text-black text-center'>
-                    <p>Version 0.1.65A</p>
+                    <p>Version 0.1.65B</p>
                 </div>
             </section>
         </>

@@ -43,27 +43,27 @@ const HeroHighlight: React.FC = () => {
 
 
   return (
-    <div className="hero min-h-screen w-full bg-base-500">
-      <div className="hero-content text-center flex-col">
-        <div className="max-w-md mx-auto">
+    <div className="hero min-h-screen w-full bg-base-500">      
+      <div className="hero-content text-center flex-col overflow-hidden">
+        <div className="w-10/12 mx-auto">
           <h1 className="text-5xl font-bold">Welcome to Dash!</h1>
           <p className="py-6">
             A simple collection of tools to help you organize your life, in a dash. Or think of it as a dashboard for managing your life. Dash. Get it? 😄
           </p>
         </div>
 
-        <div className="w-screen overflow-auto px-4 m-4 justify-items-center self-center">
-          <div className="carousel carousel-center rounded-box gap-4 w-5/6">
+        <div className="w-10/12 bg-base-content/90 rounded-xl justify-items-center self-center">
+        <div className="carousel carousel-center rounded-box p-4 max-w-md justify-items-center gap-2">
             {carouselData.map((item, index) => (
-              <div key={index} className="carousel-item">
-                <div className="card bg-base-100 shadow-xl">
+              <div key={index} className="carousel-item w-fit ">
+                <div className="card bg-base-100 shadow-xl w-10/12">
                   <figure>
                     <img src={item.image} alt={item.title} className="h-32 object-cover" /> 
                   </figure>
-                  <div className="card-body bg-success text-info-content">
+                  <div className="card-body bg-success text-success-content">
                     <h2 className="card-title">{item.title}</h2>
                     <p>{item.description}</p>
-                    <div className="card-actions justify-end">
+                    <div className="card-actions flex flex-wrap">
                       {item.tags.map(tag => (
                         <div key={tag} className="badge badge-outline">{tag}</div>
                       ))}

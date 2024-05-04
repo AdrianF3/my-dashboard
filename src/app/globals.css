@@ -18,21 +18,22 @@
 
 html,
 body {
-  min-height: 100%; /* Ensure a minimum height of 100% for smaller screens */
+  width: 100%; /* Ensuring the body takes full width */
+  min-height: 100vh; /* Using viewport height to ensure full coverage */
   margin: 0;
   padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
-      transparent,
+      rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    ); /* Ensured the gradient covers correctly */
   display: flex;
-  flex-direction: column; /* Allow content to expand vertically */
+  flex-direction: column; /* Align children in a column */
 }
 
 @layer utilities {
