@@ -262,7 +262,7 @@ const IndexPage: React.FC = ({  }) => {
                     
                 </section>
                 <div className='flex flex-col font-medium justify-center text-black text-center'>
-                    <p>Version 0.1.65B</p>
+                    <p>Version 0.1.65C</p>
                 </div>
             </section>
         </>

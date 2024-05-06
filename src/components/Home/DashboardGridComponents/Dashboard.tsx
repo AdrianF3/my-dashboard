@@ -81,28 +81,26 @@ const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
 
     // **  research better way to check against null
     if (profile && profile.zipCode && key) {
-    //   let apiURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${cityData[currentCityIndex].lat}&lon=${cityData[currentCityIndex].lon}&units=imperial&appid=${key}`      
-        
-            // let apiURL = `http://api.openweathermap.org/geo/1.0/zip?zip=${profile.zipCode},{US}&appid=${key}`
-          // For current weather data by ZIP code
-            let apiURL = `https://api.openweathermap.org/data/2.5/weather?zip=${profile.zipCode},US&appid=${key}&units=imperial`;
+        // For current weather data by ZIP code
+        let apiURL = `https://api.openweathermap.org/data/2.5/weather?zip=${profile.zipCode},US&appid=${key}&units=imperial`;
 
-            axios.get(apiURL)
-            .then(response => {
-                setWeatherData(response.data);
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });                   
+        axios.get(apiURL)
+        .then(response => {
+            setWeatherData(response.data);
+        })
+        .catch(error => {
+            console.error('There was an error!', error);
+        });                   
     }          
-  }, [])
+  }, [profile])
 
 
 
     useEffect(() => {
         const currentDate = getCurrentDate();
         setDateData(currentDate);
-    }, []);
+        console.log('useEffect called')
+    }, [getCurrentDate]);
 
     // Calculate the day of the year
     function getDayOfYear(date: Date) {

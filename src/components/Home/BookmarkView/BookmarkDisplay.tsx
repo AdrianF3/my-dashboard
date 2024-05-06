@@ -21,7 +21,7 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
 
     // Update selectedCategory based on user action or initial load
     useEffect(() => {
-      if (profile && profile.categories && profile.categories.length > 0) {
+      if (profile && profile.categories && profile.categories.length > 0) {        
 
         const sortedCategories = profile.categories.sort((a, b) => a.position - b.position);
         setSortedCategories(sortedCategories);
@@ -34,7 +34,7 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
           setSelectedCategory(sortedCategories[index]);
         }
       }
-    }, [profile]);
+    }, [profile, selectedCategory.name, selectedCategory.position]);
 
     // Function to handle category selection
     const handleCategorySelect = (categoryName: string) => {

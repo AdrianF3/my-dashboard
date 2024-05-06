@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 const HeroHighlight: React.FC = () => {
   // Dummy data for carousel items
@@ -58,7 +59,13 @@ const HeroHighlight: React.FC = () => {
               <div key={index} className="carousel-item w-fit ">
                 <div className="card bg-base-100 shadow-xl w-10/12">
                   <figure>
-                    <img src={item.image} alt={item.title} className="h-32 object-cover" /> 
+                    {/* <img src={item.image} alt={item.title} className="h-32 object-cover" />  */}
+                    <Image 
+                        src={item.image}
+                        alt={item.title}
+                        width={500}
+                        height={300}                        
+                        />
                   </figure>
                   <div className="card-body bg-success text-success-content">
                     <h2 className="card-title">{item.title}</h2>
