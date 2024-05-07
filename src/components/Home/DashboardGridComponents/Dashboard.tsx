@@ -100,7 +100,7 @@ const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
         const currentDate = getCurrentDate();
         setDateData(currentDate);
         console.log('useEffect called')
-    }, [getCurrentDate]);
+    }, []);
 
     // Calculate the day of the year
     function getDayOfYear(date: Date) {

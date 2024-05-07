@@ -6,11 +6,16 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.65D - Started 5/4/2024 - Ended ###
-- A
+#### Version 0.1.65F - Started 5/7/2024 - Ended ###
+- 
 
 
 ### Previous Version History
+
+#### Version 0.1.65E - Started 5/4/2024 - Ended 5/7/24
+- Update to homepage layout and color scheme
+- Added a footer component to dispay at bottom of all pages to contain TOS and Privacy Policy links as well as the version number
+- Properly Displaying a message if encountering an error while logging in or signing up
 
 #### Version 0.1.65C - Started 4/25/2024 - Ended 5/4/24
 - A: Began work of integrating zipCodeAPI to update automatically based on zipcode updating

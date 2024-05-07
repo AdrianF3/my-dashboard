@@ -53,13 +53,12 @@ const HeroHighlight: React.FC = () => {
           </p>
         </div>
 
-        <div className="w-10/12 bg-base-content/90 rounded-xl justify-items-center self-center">
+        <div className="bg-base-content/90 rounded-xl justify-items-center self-center">
         <div className="carousel carousel-center rounded-box p-4 max-w-md justify-items-center gap-2">
             {carouselData.map((item, index) => (
               <div key={index} className="carousel-item w-fit ">
-                <div className="card bg-base-100 shadow-xl w-10/12">
-                  <figure>
-                    {/* <img src={item.image} alt={item.title} className="h-32 object-cover" />  */}
+                <div className="card bg-base-100 shadow-xl w-full">
+                  <figure>                    
                     <Image 
                         src={item.image}
                         alt={item.title}

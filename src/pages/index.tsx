@@ -21,6 +21,7 @@ import HabitTracking from '@/components/Home/DashboardGridComponents/HabitTracki
 import BookmarkDisplay from '@/components/Home/BookmarkView/BookmarkDisplay';
 import HeroHighlight from '@/components/Home/DashExplainer/HeroHighlight';
 import { resetDemoUserContent } from '@/types/UserProfile.types';
+import Footer from '@/components/Footer';
 
 interface IndexPageProps {
     authenticated: boolean;
@@ -182,7 +183,7 @@ const IndexPage: React.FC = ({  }) => {
 
 
     if (authLoading) {
-        return <div className='justify-self-center m-auto font-medium'>Loading...</div>; // Or any other loading state you prefer
+        return <div className='justify-self-center m-auto font-medium'>Loading...</div>;
     }        
 
     if (!authenticated) {
@@ -192,9 +193,11 @@ const IndexPage: React.FC = ({  }) => {
 
             { !user ? null : <HeaderNavigationBar /> }
             <HeroHighlight />
-            <div className="flex flex-col bg-secondary/30 items-center justify-center min-h-screen py-12">
+            <div className="flex flex-col bg-emerald-800/30 items-center justify-center min-h-screen py-12">
+                <h3 className='py-6 text-5xl tracking-wide'>Log in or Register</h3>
                 <LoginForm />                    
             </div>
+            <Footer />
         </div>
         </>);
     }    
@@ -261,9 +264,7 @@ const IndexPage: React.FC = ({  }) => {
                     {renderSelectedView()}
                     
                 </section>
-                <div className='flex flex-col font-medium justify-center text-black text-center'>
-                    <p>Version 0.1.65C</p>
-                </div>
+                <Footer />
             </section>
         </>
     );

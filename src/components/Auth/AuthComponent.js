@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import '../../firebaseConfig'; // Ensure Firebase is initialized
-import { createNewUserProfile, resetDemoUserContent } from '../../types/UserProfile.types';
+import { createNewUserProfile } from '../../types/UserProfile.types';
+
 
 const AuthComponent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false); // Toggle between SignUp and SignIn
+  const [signInResponse, setSignInResponse] = useState(''); 
   const auth = getAuth();
 
   const handleSignUp = async () => {
@@ -21,6 +23,7 @@ const AuthComponent = () => {
       console.log('Document written with ID: ', userCredential.user.uid);
     } catch (error) {
       console.error('Sign Up Error:', error.message);
+      setSignInResponse(error.message);
     }
   };
 
@@ -32,6 +35,7 @@ const AuthComponent = () => {
       console.log('Signed In', userCredential.user);
     } catch (error) {
       console.error('Sign In Error:', error.message);
+      setSignInResponse(error.message);
     }
   };
 
@@ -45,7 +49,7 @@ const AuthComponent = () => {
   };
 
   return (
-    <div className="form-control w-full max-w-xs bg-primary text-primary-content p-4 rounded-xl">
+    <div className="form-control w-full max-w-xs bg-emerald-500/50 text-primary-content p-4 rounded-xl">
       <label className="label">
         <span className="label-text text-2xl">Email</span>
       </label>
@@ -66,8 +70,9 @@ const AuthComponent = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      { signInResponse !== '' ? <p className="text-error">{signInResponse}</p> : null }
       <button
-        className={`btn mt-4 ${isSignUp ? 'btn-primary' : 'btn-secondary'}`}
+        className={`btn mt-4 ${isSignUp ? 'bg-emerald-800/50' : 'bg-emerald-800/50'} border-black`}
         onClick={handleSubmit}
       >
         {isSignUp ? 'Sign Up' : 'Sign In'}
