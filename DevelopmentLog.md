@@ -7,7 +7,7 @@ Building simple, helpful tools to help manage life.
 
 ## Current Version 
 #### Version 0.1.65F - Started 5/7/2024 - Ended ###
-- 
+- Starting to build out the Timeline component
 
 
 ### Previous Version History

@@ -22,6 +22,7 @@ import BookmarkDisplay from '@/components/Home/BookmarkView/BookmarkDisplay';
 import HeroHighlight from '@/components/Home/DashExplainer/HeroHighlight';
 import { resetDemoUserContent } from '@/types/UserProfile.types';
 import Footer from '@/components/Footer';
+import TimelineMain from '@/components/Home/Timeline/TimelineMain';
 
 interface IndexPageProps {
     authenticated: boolean;
@@ -131,10 +132,7 @@ const IndexPage: React.FC = ({  }) => {
                 );
             case "timelines":
                 return (
-                    <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
-                        <CgCalendarDates />
-                        <p className="text-primary-content font-bold text-lg">Timelines *COMING SOON*</p>
-                    </div>
+                    <TimelineMain />
                 );            
             case "habit-tracking":
                 return (
