@@ -49,7 +49,7 @@ const AuthComponent = () => {
   };
 
   return (
-    <div className="form-control w-full max-w-xs bg-emerald-500/50 text-primary-content p-4 rounded-xl">
+    <div className="form-control w-full max-w-xs border-2 border-black text-primary-content p-4 rounded-xl">
       <label className="label">
         <span className="label-text text-2xl">Email</span>
       </label>

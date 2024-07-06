@@ -18,16 +18,18 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
     const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
     const [ habitLogIDToEdit, setHabitLogIDToEdit ] = useState<string | null>(null);
     const [habits, setHabits] = useState<Habit[]>([]);
+    const [isLoadingHabits, setIsLoadingHabits] = useState<boolean | null>(true)
 
     useEffect(() => {
         if (!profile) return;
-
+        setIsLoadingHabits(true)
         const userProfileRef = doc(db, "userProfile", profile.uid);
         const q = query(collection(userProfileRef, "userHabits"));
 
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const updatedHabits: Habit[] = querySnapshot.docs.map(doc => docToHabit(doc));
             setHabits(updatedHabits);
+            setIsLoadingHabits(false)
         });
 
         return () => unsubscribe();
@@ -79,20 +81,34 @@ const HabitTracking: React.FC<{ profile: UserProfile | null; }> = ({ profile }) 
             </div>
             <div>
                 <h2 className="text-xl font-bold">Your Habits</h2>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4">
-                    {habits.length > 0 && habits.map((habit) => (
-                        <HabitCard
-                            key={habit.id}
-                            title={habit.title}
-                            goal={habit.goal} 
-                            frequency={habit.frequency}
-                            id={habit.id}
-                            logs={habit.logs}
-                            beginDateTime={habit.beginDateTime}
-                            handleViewChange={handleViewChange}
-                        />
-                    ))}
-                </div>
+                {/* If Habits are loading */}
+                { isLoadingHabits ? <div className="bg-accent m-auto p-10 rounded-xl justify-center"><span className="loading loading-spinner loading-lg"></span></div> : <>
+                    
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4">
+                        {/* Display a message if no habits added yet */}
+                        { ( habits.length === 0 && !isLoadingHabits ) ? <div className="bg-accent m-auto p-10 rounded-xl border-2 border-red-400">
+                            <p className="text-xl text-center italic">
+                                No Habits Added Yet, Add One Now
+                            </p>
+                        </div> : null}
+
+                        {/* Display Habits if more than 0 */}
+                        {habits.length > 0 && !isLoadingHabits && habits.map((habit) => (
+                            <HabitCard
+                                key={habit.id}
+                                title={habit.title}
+                                goal={habit.goal} 
+                                frequency={habit.frequency}
+                                id={habit.id}
+                                logs={habit.logs}
+                                beginDateTime={habit.beginDateTime}
+                                handleViewChange={handleViewChange}
+                            />
+                        ))}
+
+                        
+                    </div>
+                    </>}
             </div>
             {/* Main Habit Display */}
             <div>

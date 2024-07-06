@@ -6,12 +6,17 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.65F - Started 5/7/2024 - Ended ###
-- Starting to build out the Timeline component
+#### Version 0.1.65G - Started 7/6/2024 - Ended #/#/2024
+- 
 
 
 ### Previous Version History
 
+#### Version 0.1.65F - Started 5/7/2024 - Ended 7/6/2024
+- Starting to build out the Timeline component
+- Added TOS and Privacy Policy page
+- Conditional Rendering display updated for Habit Tracking
+- Slight updates to colors that make up homepage
 #### Version 0.1.65E - Started 5/4/2024 - Ended 5/7/24
 - Update to homepage layout and color scheme
 - Added a footer component to dispay at bottom of all pages to contain TOS and Privacy Policy links as well as the version number

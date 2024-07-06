@@ -132,7 +132,11 @@ const IndexPage: React.FC = ({  }) => {
                 );
             case "timelines":
                 return (
-                    <TimelineMain />
+                    ( profile && profile.uid === 'hZwS4bJTnGdBnwujGkckDFDBWH43' ) ? 
+                    <TimelineMain /> : <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
+                    <BiMoneyWithdraw />
+                    <p className="text-primary-content font-bold text-lg">Timelines *COMING SOON*</p>
+                </div> 
                 );            
             case "habit-tracking":
                 return (
@@ -187,11 +191,11 @@ const IndexPage: React.FC = ({  }) => {
     if (!authenticated) {
         // Instead of redirecting, render LoginComponent and RegisterComponent        
         return (<>
-        <div className='flex flex-col w-screen bg-emerald-800/40'>
+        <div className='flex flex-col w-screen bg-slate-300/40'>
 
             { !user ? null : <HeaderNavigationBar /> }
             <HeroHighlight />
-            <div className="flex flex-col bg-emerald-800/30 items-center justify-center min-h-screen py-12">
+            <div className="flex flex-col bg-slate-500/40 items-center justify-center min-h-screen py-12">
                 <h3 className='py-6 text-5xl tracking-wide'>Log in or Register</h3>
                 <LoginForm />                    
             </div>
