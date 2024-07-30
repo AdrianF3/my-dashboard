@@ -6,11 +6,17 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.65G - Started 7/6/2024 - Ended #/#/2024
-- 
+#### Version 0.1.66A - Started 7/29/2024 - Ended #/##/2024
+
 
 
 ### Previous Version History
+#### Version 0.1.66 - Started 7/6/2024 - Ended 7/29/2024
+- Removed overall number of themes
+- Begin Implementation of Timelines
+    - Dummy plaeholder content in place
+    - Begin to pass params and build state, loading and calculation functionality 
+    - Functionality through dasbhboard in place
 
 #### Version 0.1.65F - Started 5/7/2024 - Ended 7/6/2024
 - Starting to build out the Timeline component

@@ -1,10 +1,12 @@
 import React from 'react';
+import TimelineDisplay from './TimelineDisplay';
+import { TimelineEvent } from '../../../../types/TimelineEvent.types';
 
 interface TimelineContainerProps {
-    // Add any props you need for the component here
+    eventData: TimelineEvent[];
 }
 
-const TimelineContainer: React.FC<TimelineContainerProps> = () => {
+const TimelineContainer: React.FC<TimelineContainerProps> = ({ eventData }) => {
     return (
         <div className='my-4 bg-slate-700/20'>
             {/* Add your component content here */}
@@ -18,7 +20,7 @@ const TimelineContainer: React.FC<TimelineContainerProps> = () => {
 
                 {/* Timeline Display */}
                 <div className='flex w-2/3 bg-sky-500'>
-                    <p>TIMELINE DISPLAY</p>
+                    <TimelineDisplay eventData={eventData} />
                 </div>
 
             </div>
