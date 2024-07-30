@@ -105,13 +105,16 @@ const TimelineMain: React.FC<TimelineMainProps> = () => {
                     <h2 className='text-2xl'>Timelines</h2>
                 </div>
                 <TimelineDashboard 
-                    timelineCalcValues={timelineCalcValues} 
+                    timelineCalcValues={timelineCalcValues}
                     setModal={setModal} 
                     setTimelineCalcValues={setTimelineCalcValues}
                     selectedCategories={selectedCategories}
                     setSelectedCategories={setSelectedCategories}
+                    />
+                <TimelineContainer 
+                    eventData={timelineEventsData} 
+                    timelineCalcValues={timelineCalcValues}
                 />
-                <TimelineContainer eventData={timelineEventsData} />
         </Suspense>
         
     );
