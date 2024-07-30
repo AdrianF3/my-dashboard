@@ -13,13 +13,10 @@ const TimelineContainer: React.FC<TimelineContainerProps> = ({ eventData }) => {
             <h1>Timeline Container</h1>
             <div className='flex flex-row'>
                 
-                {/* Timeline Filter */}
-                <div className='flex w-1/3 bg-sky-300'>
-                    <p>TIMELINE FILTER</p>
-                </div>
+                
 
                 {/* Timeline Display */}
-                <div className='flex w-2/3 bg-sky-500'>
+                <div className='flex bg-sky-500'>
                     <TimelineDisplay eventData={eventData} />
                 </div>
 

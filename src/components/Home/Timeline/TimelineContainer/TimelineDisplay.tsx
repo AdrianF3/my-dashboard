@@ -9,9 +9,12 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({ eventData }) => {
     return (
         <div className="space-y-4 p-4">
             {eventData.map((event) => (
+                event.visibility ? <>
+                    
                 <div key={event.id} className="bg-white p-4 rounded shadow">
                     <h2 className="text-xl font-bold">{event.title}</h2>
                     <p className="text-sm text-gray-600">{event.beginDate.toDate().toLocaleDateString()} - {event.endDate.toDate().toLocaleDateString()}</p>
+                    <p className='text-sm text-gray-699'>{event.category}</p>
                     <p className="mt-2">{event.description}</p>
                     {event.address && <p className="mt-2 text-sm text-gray-800">Location: {event.address}</p>}
                     {event.links && (
@@ -39,6 +42,7 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({ eventData }) => {
                     )}
                     <p className="mt-2 text-sm text-gray-800">Status: {event.status}</p>
                 </div>
+                </> : null 
             ))}
         </div>
     );

@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore";
 export interface TimelineEvent {
     address?: string;
     beginDate: Timestamp;
-    category: 'personal' | 'relationship' | 'home' | 'education';
+    category: 'personal' | 'relationship' | 'home' | 'education' | 'pet' | 'hobbies' | 'travel' | 'social' | 'health' | 'work';
     description: string;
     endDate: Timestamp;
     id: string;
@@ -12,90 +12,168 @@ export interface TimelineEvent {
     notes?: string; // Additional notes
     status: 'current' | 'completed' | 'hidden';
     tags?: string[]; // Tags for easier categorization
+    visibility?: boolean;
 }
 
 export const placeholderEvents: TimelineEvent[] = [
     {
         id: '1',
-        title: 'Graduation Day',
-        description: 'Graduation ceremony at the university.',
-        beginDate: new Timestamp(1672502400, 0), // January 1, 2023
-        endDate: new Timestamp(1672506000, 0),
-        category: 'education',
-        address: 'University Campus',
-        links: ['https://university.edu/graduation-info'],
-        notes: 'Remember to pick up the cap and gown.',
+        beginDate: Timestamp.fromDate(new Date('2004-06-01')),
+        endDate: Timestamp.fromDate(new Date('2004-06-01')),
+        category: 'personal',
+        title: 'Started High School',
+        description: 'First day of high school at ABC High School.',
         status: 'completed',
-        tags: ['milestone', 'ceremony']
+        visibility: true
     },
     {
         id: '2',
-        title: 'First Date',
-        description: 'Went to a lovely restaurant downtown.',
-        beginDate: new Timestamp(1675180800, 0), // February 1, 2023
-        endDate: new Timestamp(1675184400, 0),
-        category: 'relationship',
-        address: 'Downtown Restaurant',
+        beginDate: Timestamp.fromDate(new Date('2008-05-15')),
+        endDate: Timestamp.fromDate(new Date('2008-05-15')),
+        category: 'education',
+        title: 'High School Graduation',
+        description: 'Graduated from ABC High School with honors.',
         status: 'completed',
-        tags: ['romantic', 'firsts']
+        visibility: true
     },
     {
         id: '3',
-        title: 'Bought a New House',
-        description: 'Moved into the new house in the suburbs.',
-        beginDate: new Timestamp(1677769200, 0), // March 1, 2023
-        endDate: new Timestamp(1677772800, 0),
-        category: 'home',
-        address: '123 Suburb St.',
-        links: ['https://realtor.com/listing'],
-        notes: 'Need to update address on all documents.',
-        status: 'current',
-        tags: ['real estate', 'move']
+        beginDate: Timestamp.fromDate(new Date('2008-09-01')),
+        endDate: Timestamp.fromDate(new Date('2012-05-01')),
+        category: 'education',
+        title: 'Started College',
+        description: 'Started college at XYZ University.',
+        status: 'completed',
+        visibility: true
     },
     {
         id: '4',
-        title: 'Birthday Celebration',
-        description: 'Celebrated my 30th birthday with friends and family.',
-        beginDate: new Timestamp(1680447600, 0), // April 1, 2023
-        endDate: new Timestamp(1680451200, 0),
-        category: 'personal',
-        address: 'Party Hall',
+        beginDate: Timestamp.fromDate(new Date('2010-07-01')),
+        endDate: Timestamp.fromDate(new Date('2010-07-10')),
+        category: 'travel',
+        title: 'Trip to Europe',
+        description: 'Vacationed in France and Italy.',
         status: 'completed',
-        tags: ['milestone', 'party']
+        visibility: true
     },
     {
         id: '5',
-        title: 'Started New Job',
-        description: 'First day at the new company.',
-        beginDate: new Timestamp(1683039600, 0), // May 1, 2023
-        endDate: new Timestamp(1683043200, 0),
-        category: 'personal',
-        address: 'New Company HQ',
-        links: ['https://newcompany.com'],
-        status: 'current',
-        tags: ['career', 'milestone']
+        beginDate: Timestamp.fromDate(new Date('2012-06-01')),
+        endDate: Timestamp.fromDate(new Date('2012-06-01')),
+        category: 'education',
+        title: 'College Graduation',
+        description: 'Graduated from XYZ University with a degree in Computer Science.',
+        status: 'completed',
+        visibility: true
     },
     {
         id: '6',
-        title: 'Completed Online Course',
-        description: 'Finished a course on web development.',
-        beginDate: new Timestamp(1685718000, 0), // June 1, 2023
-        endDate: new Timestamp(1685721600, 0),
-        category: 'education',
-        links: ['https://onlinecourse.com'],
-        notes: 'Remember to download the certificate.',
+        beginDate: Timestamp.fromDate(new Date('2013-04-20')),
+        endDate: Timestamp.fromDate(new Date('2013-04-20')),
+        category: 'relationship',
+        title: 'Met Future Spouse',
+        description: 'Met my future spouse at a mutual friend’s party.',
         status: 'completed',
-        tags: ['learning', 'achievement']
+        visibility: true
     },
     {
         id: '7',
-        title: 'Anniversary Dinner',
-        description: 'Celebrated our anniversary with a special dinner.',
-        beginDate: new Timestamp(1688300000, 0), // July 1, 2023
-        endDate: new Timestamp(1688303600, 0),
+        beginDate: Timestamp.fromDate(new Date('2014-06-15')),
+        endDate: Timestamp.fromDate(new Date('2014-06-15')),
+        category: 'work',
+        title: 'Started First Job',
+        description: 'Started my first job at ABC Corp as a Software Engineer.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '8',
+        beginDate: Timestamp.fromDate(new Date('2016-08-01')),
+        endDate: Timestamp.fromDate(new Date('2016-08-01')),
+        category: 'home',
+        title: 'Bought First House',
+        description: 'Bought my first house in XYZ City.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '9',
+        beginDate: Timestamp.fromDate(new Date('2017-05-01')),
+        endDate: Timestamp.fromDate(new Date('2017-05-01')),
+        category: 'pet',
+        title: 'Got a Puppy',
+        description: 'Adopted a golden retriever puppy named Max.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '10',
+        beginDate: Timestamp.fromDate(new Date('2018-09-15')),
+        endDate: Timestamp.fromDate(new Date('2018-09-15')),
         category: 'relationship',
-        address: 'Favorite Restaurant',
+        title: 'Engagement',
+        description: 'Got engaged to my future spouse.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '11',
+        beginDate: Timestamp.fromDate(new Date('2019-06-01')),
+        endDate: Timestamp.fromDate(new Date('2019-06-01')),
+        category: 'relationship',
+        title: 'Wedding Day',
+        description: 'Married my spouse in a beautiful ceremony.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '12',
+        beginDate: Timestamp.fromDate(new Date('2020-03-01')),
+        endDate: Timestamp.fromDate(new Date('2020-03-01')),
+        category: 'health',
+        title: 'Health Checkup',
+        description: 'Annual health checkup with Dr. Smith.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '13',
+        beginDate: Timestamp.fromDate(new Date('2021-01-01')),
+        endDate: Timestamp.fromDate(new Date('2021-01-01')),
+        category: 'hobbies',
+        title: 'Started Painting',
+        description: 'Took up painting as a new hobby.',
         status: 'current',
-        tags: ['anniversary', 'celebration']
+        visibility: true
+    },
+    {
+        id: '14',
+        beginDate: Timestamp.fromDate(new Date('2022-07-01')),
+        endDate: Timestamp.fromDate(new Date('2022-07-01')),
+        category: 'travel',
+        title: 'Trip to Japan',
+        description: 'Traveled to Japan for a summer vacation.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '15',
+        beginDate: Timestamp.fromDate(new Date('2023-11-01')),
+        endDate: Timestamp.fromDate(new Date('2023-11-01')),
+        category: 'work',
+        title: 'Promotion',
+        description: 'Promoted to Senior Software Engineer at ABC Corp.',
+        status: 'completed',
+        visibility: true
+    },
+    {
+        id: '16',
+        beginDate: Timestamp.fromDate(new Date('2024-03-15')),
+        endDate: Timestamp.fromDate(new Date('2024-03-15')),
+        category: 'social',
+        title: 'Joined Book Club',
+        description: 'Joined a local book club.',
+        status: 'current',
+        visibility: true
     }
 ];
