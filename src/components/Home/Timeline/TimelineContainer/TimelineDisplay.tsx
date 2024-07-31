@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TimelineEvent } from '../../../../types/TimelineEvent.types';
 import { calculateDatePosition, generateDates } from '../helpers/dateUtils';
 
@@ -8,6 +8,7 @@ interface TimelineCalcValues {
     timescale: 'Days' | 'Months' | 'Years';
     numEvents: number;
 }
+
 interface TimelineDisplayProps {
     eventData: TimelineEvent[];
     timelineCalcValues: TimelineCalcValues;
@@ -15,27 +16,31 @@ interface TimelineDisplayProps {
 
 const TimelineDisplay: React.FC<TimelineDisplayProps> = ({ eventData, timelineCalcValues }) => {
     const { startDate, endDate, timescale } = timelineCalcValues;
+    const [dates, setDates] = useState<Date[]>([]);
+
+    useEffect(() => {
+        if (startDate && endDate) {
+            const generatedDates = generateDates(startDate, endDate, timescale);
+            setDates(generatedDates);
+        }
+    }, [startDate, endDate, timescale]);
 
     if (!startDate || !endDate) {
         return <div>No timeline data available...</div>;
     }
 
-    const dates = generateDates(startDate, endDate, timescale);
-    const dateWidth = 100 / dates.length; // Percentage width of each date to avoid overlapping
+    const dateWidth = 100 / dates.length;
 
     return (
         <div className="relative w-full h-48 bg-gray-200 overflow-x-scroll">
-            {/* Render Dates */}
-            {dates.map((date, index) => {
-                const position = index * dateWidth; // Calculate the position based on index and dateWidth
-                return (
+            <div className="relative flex">
+                {/* Render Dates */}
+                {dates.map((date, index) => (
                     <div
                         key={index}
-                        className="absolute text-xs text-gray-700 bg-white p-1 rounded shadow"
+                        className="relative flex-shrink-0 text-xs text-gray-700 bg-white p-1 rounded shadow"
                         style={{
-                            left: `${position}%`,
-                            top: '0',
-                            transform: 'translateX(-50%)',
+                            width: `${dateWidth}%`,
                             whiteSpace: 'nowrap',
                             padding: '4px',
                             margin: '4px',
@@ -43,8 +48,8 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({ eventData, timelineCa
                     >
                         {date.toLocaleDateString()}
                     </div>
-                );
-            })}
+                ))}
+            </div>
 
             {/* Render Events */}
             {eventData.map((event) => {
