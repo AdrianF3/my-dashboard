@@ -26,8 +26,6 @@ const categories = [
 ] as const;
 type Category = typeof categories[number];
 
-
-
 interface TimelineMainProps {
     // Add any props you need for the component here
 }
@@ -89,7 +87,6 @@ const TimelineMain: React.FC<TimelineMainProps> = () => {
         );
     }, [selectedCategories]);
 
-
     if (timelineStatus === 'empty') {
         return <div>No events could be found...</div>;
     }
@@ -99,24 +96,22 @@ const TimelineMain: React.FC<TimelineMainProps> = () => {
     }
 
     return (
-        
         <Suspense fallback={<div>Loading timeline...</div>}>
-                <div className='flex justify-center mt-4'>
-                    <h2 className='text-2xl'>Timelines</h2>
-                </div>
-                <TimelineDashboard 
-                    timelineCalcValues={timelineCalcValues}
-                    setModal={setModal} 
-                    setTimelineCalcValues={setTimelineCalcValues}
-                    selectedCategories={selectedCategories}
-                    setSelectedCategories={setSelectedCategories}
-                    />
-                <TimelineContainer 
-                    eventData={timelineEventsData} 
-                    timelineCalcValues={timelineCalcValues}
-                />
+            <div className='flex justify-center mt-4'>
+                <h2 className='text-2xl'>Timelines</h2>
+            </div>
+            <TimelineDashboard 
+                timelineCalcValues={timelineCalcValues}
+                setModal={setModal} 
+                setTimelineCalcValues={setTimelineCalcValues}
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+            />
+            <TimelineContainer 
+                eventData={timelineEventsData} 
+                timelineCalcValues={timelineCalcValues}
+            />
         </Suspense>
-        
     );
 };
 

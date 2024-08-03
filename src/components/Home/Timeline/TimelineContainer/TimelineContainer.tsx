@@ -8,6 +8,7 @@ interface TimelineCalcValues {
     timescale: 'Days' | 'Months' | 'Years';
     numEvents: number;
 }
+
 interface TimelineContainerProps {
     eventData: TimelineEvent[];
     timelineCalcValues: TimelineCalcValues;
