@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { TimelineEvent } from '../../../../types/TimelineEvent.types';
+import { Timestamp } from 'firebase/firestore';
+import { TimelineEvent } from '@/types/TimelineEvent.types';
 import { generateDates, generateEventsByCategory } from '../helpers/dateUtils';
 
 interface TimelineCalcValues {
@@ -14,16 +15,20 @@ interface TimelineDisplayProps {
     timelineCalcValues: TimelineCalcValues;
 }
 
+const PAGE_SIZE = 30; // Number of dates to display per page
+
 const TimelineDisplay: React.FC<TimelineDisplayProps> = ({ eventData, timelineCalcValues }) => {
     const { startDate, endDate, timescale } = timelineCalcValues;
     const [dates, setDates] = useState<Date[]>([]);
     const [dateIndex, setDateIndex] = useState<{ [key: string]: number }>({});
+    const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
         if (startDate && endDate) {
             const { dates, dateIndex } = generateDates(startDate, endDate, timescale);
             setDates(dates);
             setDateIndex(dateIndex);
+            setCurrentPage(0); // Reset to the first page when timescale changes
         }
     }, [startDate, endDate, timescale, eventData]);
 
@@ -31,55 +36,99 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({ eventData, timelineCa
         return <div>No timeline data available...</div>;
     }
 
-    const dateWidth = "12.5%"; // roughly 1/8th of the display width
+    const sortedEventsByCategory = generateEventsByCategory(eventData);
+
+    const getCellPosition = (date: Date) => {
+        return dateIndex[date.toISOString().split('T')[0]];
+    };
+
+    const displayedDates = dates.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
+
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if ((currentPage + 1) * PAGE_SIZE < dates.length) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
     return (
-        <div className="relative w-full h-48 bg-gray-200 overflow-x-auto">
-            <div className="relative flex">
-                {/* Render Dates */}
-                {dates.map((date, index) => (
-                    <div
-                        key={index}
-                        className="relative flex-shrink-0 text-xs text-gray-700 bg-white p-1 rounded shadow"
-                        style={{
-                            width: dateWidth,
-                            whiteSpace: 'nowrap',
-                            padding: '4px',
-                            margin: '4px',
-                        }}
-                    >
-                        {date.toLocaleDateString()}
-                    </div>
-                ))}
+        <div className="w-full overflow-x-auto">
+            <div className="flex justify-between mb-2">
+                <button onClick={handlePreviousPage} disabled={currentPage === 0}>
+                    Previous
+                </button>
+                <button onClick={handleNextPage} disabled={(currentPage + 1) * PAGE_SIZE >= dates.length}>
+                    Next
+                </button>
             </div>
+            <table className="table-auto w-full">
+                <thead>
+                    <tr>
+                        {displayedDates.map((date, index) => (
+                            <th key={index} className="w-1/12 text-xs p-1 bg-gray-100 border">
+                                {timescale === 'Days' && date.toLocaleDateString()}
+                                {timescale === 'Months' && date.toLocaleDateString('default', { year: 'numeric', month: 'short' })}
+                                {timescale === 'Years' && date.toLocaleDateString('default', { year: 'numeric' })}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.keys(sortedEventsByCategory).map((category) => (
+                        <React.Fragment key={category}>
+                            <tr>
+                                <td colSpan={PAGE_SIZE} className="bg-gray-200 text-left p-2 font-bold">
+                                    {category}
+                                </td>
+                            </tr>
+                            <tr>
+                                {displayedDates.map((date, colIndex) => (
+                                    <td key={colIndex} className="h-24 relative border">
+                                        {sortedEventsByCategory[category].map((event) => {
+                                            if (!event.visibility) return null;
 
-            <div className="relative w-full h-full">
-                {/* Render Events */}
-                {eventData.map((event) => {
-                    if (!event.visibility) return null;
+                                            const startPosition = getCellPosition(event.beginDate.toDate());
+                                            const endPosition = getCellPosition(event.endDate.toDate());
+                                            const datePosition = dateIndex[date.toISOString().split('T')[0]];
 
-                    const startIndex = dateIndex[event.beginDate.toDate().toISOString().split('T')[0]];
-                    const endIndex = dateIndex[event.endDate.toDate().toISOString().split('T')[0]];
-                    const leftPosition = (startIndex / dates.length) * 100;
-                    const width = ((endIndex - startIndex + 1) / dates.length) * 100;
-
-                    return (
-                        <div
-                            key={event.id}
-                            className="absolute bg-blue-500 text-white rounded p-2 shadow-md"
-                            style={{
-                                left: `${leftPosition}%`,
-                                width: `${width}%`,
-                                top: `${10 * parseInt(event.id, 10)}%`, // Adjust this to space out events
-                                transform: 'translateY(-50%)',
-                            }}
-                        >
-                            <h2 className="text-sm font-bold">{event.title}</h2>
-                            <p className="text-xs">{event.beginDate.toDate().toLocaleDateString()} - {event.endDate.toDate().toLocaleDateString()}</p>
-                        </div>
-                    );
-                })}
-            </div>
+                                            if (datePosition >= startPosition && datePosition <= endPosition) {
+                                                const eventSpan = endPosition - startPosition + 1;
+                                                return (
+                                                    <div
+                                                        key={event.id}
+                                                        className={`absolute bg-blue-500 text-white rounded p-2 shadow-md event-span-${eventSpan}`}
+                                                        style={{
+                                                            left: 0,
+                                                            right: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            top: 0,
+                                                            zIndex: 1,
+                                                        }}
+                                                    >
+                                                        {datePosition === startPosition && (
+                                                            <div className="sticky top-0">
+                                                                <h2 className="text-sm font-bold">{event.title}</h2>
+                                                                <p className="text-xs">{event.beginDate.toDate().toLocaleDateString()} - {event.endDate.toDate().toLocaleDateString()}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </td>
+                                ))}
+                            </tr>
+                        </React.Fragment>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

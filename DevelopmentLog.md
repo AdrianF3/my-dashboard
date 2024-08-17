@@ -6,12 +6,16 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.66C - Started 7/30/2024 - Ended #/##/2024
-- Testing new approach to TimelineDisplay
+#### Version 0.1.66E - Started 8/17/2024 - Ended #/##/2024
+- 
 
 
 
 ### Previous Version History
+#### Version 0.1.66D - Started 7/30/2024 - Ended 08/17/2024
+- Testing new approach to TimelineDisplay
+- Transitioning to working on Budget Functionality by developing layout and initial control of data and application
+
 #### Version 0.1.66A - Started 7/29/2024 - Ended 7/30/2024
 - Implented filtering functionality for timeline
 - Additional categories

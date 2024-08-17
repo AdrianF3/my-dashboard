@@ -4,6 +4,7 @@ import firebaseAdmin from '../utils/firebaseAdmin';
 import HeaderNavigationBar from '@/components/SharedComponents/HeaderNavigationBar';
 import Dashboard from '@/components/Home/DashboardGridComponents/Dashboard';
 import useUserProfile from '../hooks/useUserProfile';
+import BudgetContainer from '../components/Home/Budget/BudgetContainer'
 import ProfileSettingsView from '@/components/ProfileSettings/ProfileSettingsView';
 import { useAuth } from '../contexts/AuthContext'; // Adjust the path according to your project structure
 import { getFirestore, setDoc, doc } from 'firebase/firestore';
@@ -144,6 +145,8 @@ const IndexPage: React.FC = ({  }) => {
                 );
             case "budget":
                 return (
+                    ( profile && profile.uid === 'hZwS4bJTnGdBnwujGkckDFDBWH43' ) ?
+                        <BudgetContainer /> :                    
                     <div className="rounded-lg bg-primary flex flex-row justify-center items-center gap-4 p-4">
                         <BiMoneyWithdraw />
                         <p className="text-primary-content font-bold text-lg">Budget *COMING SOON*</p>

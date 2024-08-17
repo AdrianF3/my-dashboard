@@ -20,7 +20,7 @@ export const placeholderEvents: TimelineEvent[] = [
         id: '1',
         beginDate: Timestamp.fromDate(new Date('2004-06-01')),
         endDate: Timestamp.fromDate(new Date('2004-06-01')),
-        category: 'personal',
+        category: 'education',
         title: 'Started High School',
         description: 'First day of high school at ABC High School.',
         status: 'completed',
