@@ -7,7 +7,7 @@ Building simple, helpful tools to help manage life.
 
 ## Current Version 
 #### Version 0.1.66E - Started 8/17/2024 - Ended #/##/2024
-- 
+- Contiued work on budget feature
 
 
 

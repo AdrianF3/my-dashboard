@@ -16,7 +16,8 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
             status: account.status,
             startingBalance: account.startingBalance || 0,
             currentBalance: account.startingBalance || 0,
-            transactions: []
+            transactions: [],
+            visible: true
         };
     });
 
@@ -45,9 +46,14 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
         detailedSummaries[account.accountID].currentBalance = currentBalances[account.accountID];
     });
 
+    const budgetStartDate = transactions[0]?.date || null;
+    const budgetEndDate = transactions[transactions.length - 1]?.date || null;
+
     return {
-        budgetStartDate: transactions[0]?.date || null,
-        budgetEndDate: transactions[transactions.length - 1]?.date || null,
+        budgetStartDate,
+        budgetEndDate,
+        displayStartDate: budgetStartDate,
+        displayEndDate: budgetEndDate,
         currentBalances,
         detailedSummaries
     };
