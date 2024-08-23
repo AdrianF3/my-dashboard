@@ -10,8 +10,7 @@ const BudgetOverview: React.FC<{ detailedSummaries: any, toggleAccountVisibility
             <section className="flex flex-wrap justify-start gap-4">
 
                 {Object.keys(detailedSummaries).map((accountID) => {
-                    const account = detailedSummaries[accountID];
-                    console.log('account', account)
+                    const account = detailedSummaries[accountID];                    
 
                     // Find the date of the most recent transaction
                     const mostRecentTransaction = account.transactions

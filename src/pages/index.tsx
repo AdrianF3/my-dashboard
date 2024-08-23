@@ -34,7 +34,7 @@ const IndexPage: React.FC = ({  }) => {
     const [ profileUID, setProfileUID ] = useState<any>(null);
     const authenticated = !!user;
     // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, habit-tracking, budget, profile-settings
-    const [currentView, setCurrentView] = React.useState<string>("dashboard");
+    const [currentView, setCurrentView] = React.useState<string>("budget");
     const { profile, loading, error } = useUserProfile(profileUID);    
     const [ theme, setTheme ] = React.useState('nord');
     const listOfThemes = [

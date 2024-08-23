@@ -6,8 +6,10 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.66E - Started 8/17/2024 - Ended #/##/2024
+#### Version 0.1.66E1 - Started 8/17/2024 - Ended #/##/2024
 - Contiued work on budget feature
+- Expanding View Sort Options
+- Implemented Timleine View
 
 
 

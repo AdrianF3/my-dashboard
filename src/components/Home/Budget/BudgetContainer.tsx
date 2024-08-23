@@ -6,6 +6,11 @@ import { calcBankDetails } from './BudgetHelpers';
 import BudgetOverview from './BudgetOverview';
 import TransactionView from './TransactionView';
 import { Timestamp } from 'firebase/firestore';
+import { GrTransaction } from 'react-icons/gr';
+import { MdCalendarViewMonth, MdTimeline } from 'react-icons/md';
+import { TbSortAscending2, TbSortDescending2 } from 'react-icons/tb';
+import TimelineView from './TimelineView';
+
 
 const BudgetContainer: React.FC = () => {
     const [budgetStatus, setBudgetStatus] = useState<string>('loading');
@@ -19,6 +24,9 @@ const BudgetContainer: React.FC = () => {
         setAccountData(bankAccounts);
 
         const calcReturnValues = calcBankDetails(bankAccounts, transactions);
+
+        
+
         setBudgetDetails(calcReturnValues);
 
         if (transactions.length === 0) {
@@ -38,6 +46,8 @@ const BudgetContainer: React.FC = () => {
                 ...prevDetails,
                 detailedSummaries: { ...prevDetails.detailedSummaries }
             };
+
+            
 
             if (updatedDetails.detailedSummaries[accountID]) {
                 updatedDetails.detailedSummaries[accountID] = {
@@ -86,6 +96,27 @@ const BudgetContainer: React.FC = () => {
         });
     };
 
+    const updateViewSortOptions = (viewOptions: string | null, sortOptions: string | null) => {
+
+        if (viewOptions) {
+            setBudgetDetails((prevDetails: any) => {
+                return {
+                    ...prevDetails,
+                    viewOptions
+                }
+            })
+        }
+        if (sortOptions) {
+            setBudgetDetails((prevDetails: any) => {
+                return {
+                    ...prevDetails,
+                    sortOptions
+                }
+            })
+        }
+
+    }
+
 
     if (budgetStatus === 'empty') {
         return <div>No events could be found...</div>;
@@ -97,46 +128,103 @@ const BudgetContainer: React.FC = () => {
 
     return (
         <Suspense fallback={<div>Loading budget data...</div>}>
-            <div className="my-4 bg-slate-700/20 p-4 rounded">
-                <h1 className="text-lg font-bold mb-4">Budget Overview</h1>
-                {/* Budget Data */}
-                <div className='flex flex-col m-2'>
-                    <p>Data Available</p>
-                    <p><strong>From:</strong> {budgetDetails.budgetStartDate?.toDate().toLocaleDateString()}</p>
-                    <p><strong>To:</strong> {budgetDetails.budgetEndDate?.toDate().toLocaleDateString()}</p>
-                </div>
-                {/* Budget Filters */}
-                <div className='flex flex-col m-2'>
-                    <p>Currently Viewing</p>
-                    <div className='flex flex-col'>
-                        <div className='mr-4'>
-                            <label><strong>From:</strong></label>
-                            <DatePicker
-                                selected={budgetDetails.displayStartDate?.toDate()}
-                                onChange={(date) => updateDateRange(date, budgetDetails.displayEndDate?.toDate())}
-                                dateFormat="MMMM d, yyyy"
-                                className="input input-bordered"
-                            />
+            <section className="flex flex-col justify-center bg-slate-700/20 p-4 rounded">
+
+                {/* Budget Details and Display Options */}
+                <div className='flex flex-row'>
+                    {/* Left Section */}
+                    <div className='flex flex-col m-2'>
+                        <h1 className="text-lg font-bold mb-4">Budget Overview</h1>
+                        {/* Budget Data */}
+                        <div className='flex flex-col m-2'>
+                            <p>Data Available</p>
+                            <p><strong>From:</strong> {budgetDetails.budgetStartDate?.toDate().toLocaleDateString()}</p>
+                            <p><strong>To:</strong> {budgetDetails.budgetEndDate?.toDate().toLocaleDateString()}</p>
+                        </div>                    
+                        <p>Currently Viewing</p>
+                        <div className='flex flex-col'>
+                            <div className='mr-4'>
+                                <label><strong>From:</strong></label>
+                                <DatePicker
+                                    selected={budgetDetails.displayStartDate?.toDate()}
+                                    onChange={(date) => updateDateRange(date, budgetDetails.displayEndDate?.toDate())}
+                                    dateFormat="MMMM d, yyyy"
+                                    className="input input-bordered"
+                                />
+                            </div>
+                            <div>
+                                <label><strong>To:</strong></label>
+                                <DatePicker
+                                    selected={budgetDetails.displayEndDate?.toDate()}
+                                    onChange={(date) => updateDateRange(budgetDetails.displayStartDate?.toDate(), date)}
+                                    dateFormat="MMMM d, yyyy"
+                                    className="input input-bordered"
+                                />
+                            </div>
                         </div>
-                        <div>
-                            <label><strong>To:</strong></label>
-                            <DatePicker
-                                selected={budgetDetails.displayEndDate?.toDate()}
-                                onChange={(date) => updateDateRange(budgetDetails.displayStartDate?.toDate(), date)}
-                                dateFormat="MMMM d, yyyy"
-                                className="input input-bordered"
-                            />
+                    </div>
+                    {/* Right Section */}
+                    <div className='flex flex-col m-2'>
+                        {/* Options for Different Views and Sorting Options */}                            
+                        {/* View Options */}
+                        <div className='flex flex-row min-w-[250px] max-w-sm justify-center'>
+                            {/* Transaction View */}
+                            <button className={`btn ${budgetDetails.viewOptions === 'Transaction' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions('Transaction', null)}>
+                                <GrTransaction />
+                                Transactions
+                            </button>
+                            {/* Monthly View */}
+                            <button className={`btn ${budgetDetails.viewOptions === 'Month' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions('Month', null)}>
+                                <MdCalendarViewMonth />
+                                Monthly
+                            </button>
+                            {/* Timeline View */}
+                            <button className={`btn ${budgetDetails.viewOptions === 'Timeline' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions('Timeline', null)}>
+                                <MdTimeline />
+                                Timeline
+                            </button>
+                        </div>
+                        {/* Sort Options */}
+                        <div className='flex flex-row min-w-[250px] max-w-sm justify-center'>
+                            {/* Sort Ascending */}
+                            <button className={`btn ${budgetDetails.sortOptions === 'Ascending' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions(null, 'Ascending')}>
+                                <TbSortAscending2 />
+                                Ascending
+                            </button>
+                            {/* Sort Descending */}
+                            <button className={`btn ${budgetDetails.sortOptions === 'Descending' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions(null, 'Descending')}>
+                                <TbSortDescending2 />
+                                Descending
+                            </button>                                
                         </div>
                     </div>
                 </div>
-                <BudgetOverview 
-                    detailedSummaries={budgetDetails.detailedSummaries} 
-                    toggleAccountVisibility={toggleAccountVisibility}
-                />
-                { budgetDetails.detailedSummaries ? <>
-                <TransactionView detailedSummaries={budgetDetails.detailedSummaries} />
-                </> : null}
-            </div>
+                
+                <div className='flex flex-col'>
+                    <BudgetOverview 
+                        detailedSummaries={budgetDetails.detailedSummaries} 
+                        toggleAccountVisibility={toggleAccountVisibility}
+                        />
+                    { budgetDetails.detailedSummaries ? <>
+                        {/* Filter By View Options */}
+                        { budgetDetails.viewOptions === 'Transaction' ?
+                        <TransactionView detailedSummaries={budgetDetails.detailedSummaries} /> : null } 
+                        { budgetDetails.viewOptions === 'Timeline' ?
+                        <TimelineView budgetDetails={budgetDetails} /> : null } 
+                            
+                    </> : null}
+                </div>
+                    
+
+
+                    
+                
+                
+                    
+
+
+
+            </section>
         </Suspense>
     );
 };
