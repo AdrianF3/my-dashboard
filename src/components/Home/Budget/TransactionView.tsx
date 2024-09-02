@@ -1,14 +1,23 @@
 import React from 'react';
 import { Transaction } from '../../../types/Banking.types';
 
-const TransactionView: React.FC<{ detailedSummaries: Record<string, any> }> = ({ detailedSummaries }) => {
+const TransactionView: React.FC<{ budgetDetails: Record<string, any> }> = ({ budgetDetails }) => {
     // Combine transactions from all visible accounts
-    const visibleTransactions: Transaction[] = Object.keys(detailedSummaries)
-        .filter(accountID => detailedSummaries[accountID].visible) // Filter for visible accounts
-        .flatMap(accountID => detailedSummaries[accountID].transactions); // Combine transactions
+    const visibleTransactions: Transaction[] = Object.keys(budgetDetails.detailedSummaries)
+        .filter(accountID => budgetDetails.detailedSummaries[accountID].visible) // Filter for visible accounts
+        .flatMap(accountID => budgetDetails.detailedSummaries[accountID].transactions); // Combine transactions
 
-    // Sort the transactions by date in descending order
-    const sortedTransactions = [...visibleTransactions].sort((a, b) => b.date.toDate().getTime() - a.date.toDate().getTime());
+    // Sort the transactions based on user preference
+    const sortedTransactions = [...visibleTransactions].sort((a, b) => {
+        const dateA = a.date.toDate().getTime();
+        const dateB = b.date.toDate().getTime();
+
+        if (budgetDetails.sortOptions === 'Ascending') {
+            return dateA - dateB; // Oldest first
+        } else {
+            return dateB - dateA; // Newest first (default)
+        }
+    });
 
     // Function to return bg-color for transaction
     const calcBGColor = (type: string) => {

@@ -6,14 +6,19 @@ Building simple, helpful tools to help manage life.
 ## Development Work
 
 ## Current Version 
-#### Version 0.1.66E1 - Started 8/17/2024 - Ended #/##/2024
-- Contiued work on budget feature
-- Expanding View Sort Options
-- Implemented Timleine View
+#### Version 0.1.66F - Started 9/01/2024 - Ended #/#/2024
+- 
 
 
 
 ### Previous Version History
+#### Version 0.1.66E - Started 8/17/2024 - Ended 9/01/2024
+- Contiued work on budget feature
+- Expanding View Sort Options
+    - Refactored conditional rendering to display properly
+- Implemented Timleine View
+- Implemeted Monthly View
+
 #### Version 0.1.66D - Started 7/30/2024 - Ended 08/17/2024
 - Testing new approach to TimelineDisplay
 - Transitioning to working on Budget Functionality by developing layout and initial control of data and application

@@ -10,6 +10,7 @@ import { GrTransaction } from 'react-icons/gr';
 import { MdCalendarViewMonth, MdTimeline } from 'react-icons/md';
 import { TbSortAscending2, TbSortDescending2 } from 'react-icons/tb';
 import TimelineView from './TimelineView';
+import MonthlyView from './MonthlyView';
 
 
 const BudgetContainer: React.FC = () => {
@@ -62,7 +63,6 @@ const BudgetContainer: React.FC = () => {
         });
     };
 
-    // Function to update displayStartDate and displayEndDate
     // Function to update displayStartDate and displayEndDate and filter transactions
     const updateDateRange = (start: Date | null, end: Date | null) => {
         setBudgetDetails((prevDetails: any) => {
@@ -106,7 +106,8 @@ const BudgetContainer: React.FC = () => {
                 }
             })
         }
-        if (sortOptions) {
+        if (sortOptions) {        
+            
             setBudgetDetails((prevDetails: any) => {
                 return {
                     ...prevDetails,
@@ -185,18 +186,20 @@ const BudgetContainer: React.FC = () => {
                             </button>
                         </div>
                         {/* Sort Options */}
-                        <div className='flex flex-row min-w-[250px] max-w-sm justify-center'>
-                            {/* Sort Ascending */}
-                            <button className={`btn ${budgetDetails.sortOptions === 'Ascending' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions(null, 'Ascending')}>
-                                <TbSortAscending2 />
-                                Ascending
-                            </button>
-                            {/* Sort Descending */}
-                            <button className={`btn ${budgetDetails.sortOptions === 'Descending' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions(null, 'Descending')}>
-                                <TbSortDescending2 />
-                                Descending
-                            </button>                                
-                        </div>
+                        { budgetDetails.viewOptions === 'Transaction' ? <>
+                            <div className='flex flex-row min-w-[250px] max-w-sm justify-center'>
+                                {/* Sort Ascending */}
+                                <button className={`btn ${budgetDetails.sortOptions === 'Ascending' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions(null, 'Ascending')}>
+                                    <TbSortAscending2 />
+                                    Ascending
+                                </button>
+                                {/* Sort Descending */}
+                                <button className={`btn ${budgetDetails.sortOptions === 'Descending' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions(null, 'Descending')}>
+                                    <TbSortDescending2 />
+                                    Descending
+                                </button>                                
+                            </div>
+                        </> : null }
                     </div>
                 </div>
                 
@@ -208,9 +211,11 @@ const BudgetContainer: React.FC = () => {
                     { budgetDetails.detailedSummaries ? <>
                         {/* Filter By View Options */}
                         { budgetDetails.viewOptions === 'Transaction' ?
-                        <TransactionView detailedSummaries={budgetDetails.detailedSummaries} /> : null } 
+                        <TransactionView budgetDetails={budgetDetails} /> : null } 
                         { budgetDetails.viewOptions === 'Timeline' ?
                         <TimelineView budgetDetails={budgetDetails} /> : null } 
+                        { budgetDetails.viewOptions === 'Month' ?
+                        <MonthlyView budgetDetails={budgetDetails} /> : null } 
                             
                     </> : null}
                 </div>

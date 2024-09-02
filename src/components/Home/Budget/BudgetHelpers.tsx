@@ -28,6 +28,13 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
     });
 
     transactions.forEach(tx => {
+        // Ensure correct category for income transactions
+        if (tx.type === 'income') {
+            if (tx.category !== 'Work Income' && tx.category !== 'Misc. Income') {
+                tx.category = Math.random() > 0.5 ? 'Work Income' : 'Misc. Income';
+            }
+        }
+
         const account = detailedSummaries[tx.accountID];
         if (account) {
             account.transactions.push(tx);
@@ -68,7 +75,7 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
     const budgetStartDate = transactions[0]?.date || null;
     const budgetEndDate = transactions[transactions.length - 1]?.date || null;
     const viewOptions = 'Transaction';
-    const sortOptions = 'Ascending';
+    const sortOptions = 'Descending';
 
     return {
         budgetStartDate,
@@ -81,4 +88,34 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
         sortOptions,
         timelineData
     };
+};
+
+// Sample function to generate 150 transactions
+export const generateSampleTransactions = (): Transaction[] => {
+    const categories = ['Groceries', 'Rent', 'Utilities', 'Work Income', 'Misc. Income', 'Dining', 'Entertainment'];
+    const types = ['expense', 'income', 'debt purchase', 'debt payment'];
+    const bankAccountIDs = ['account1', 'account2', 'account3'];
+
+    const transactions: Transaction[] = [];
+
+    for (let i = 0; i < 150; i++) {
+        const type = types[Math.floor(Math.random() * types.length)];
+        let category = categories[Math.floor(Math.random() * categories.length)];
+
+        if (type === 'income') {
+            category = Math.random() > 0.5 ? 'Work Income' : 'Misc. Income';
+        }
+
+        transactions.push({
+            id: `tx-${i}`,
+            accountID: bankAccountIDs[Math.floor(Math.random() * bankAccountIDs.length)],
+            date: Timestamp.fromDate(new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)),
+            description: `Sample transaction ${i + 1}`,
+            amount: parseFloat((Math.random() * 500 + 50).toFixed(2)),
+            type,
+            category
+        });
+    }
+
+    return transactions;
 };
