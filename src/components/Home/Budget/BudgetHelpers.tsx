@@ -93,7 +93,7 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
 // Sample function to generate 150 transactions
 export const generateSampleTransactions = (): Transaction[] => {
     const categories = ['Groceries', 'Rent', 'Utilities', 'Work Income', 'Misc. Income', 'Dining', 'Entertainment'];
-    const types = ['expense', 'income', 'debt purchase', 'debt payment'];
+    const types: Array<'expense' | 'income' | 'debt purchase' | 'debt payment'> = ['expense', 'income', 'debt purchase', 'debt payment'];
     const bankAccountIDs = ['account1', 'account2', 'account3'];
 
     const transactions: Transaction[] = [];
@@ -112,7 +112,7 @@ export const generateSampleTransactions = (): Transaction[] => {
             date: Timestamp.fromDate(new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)),
             description: `Sample transaction ${i + 1}`,
             amount: parseFloat((Math.random() * 500 + 50).toFixed(2)),
-            type,
+            type,  // The type is now correctly typed
             category
         });
     }
