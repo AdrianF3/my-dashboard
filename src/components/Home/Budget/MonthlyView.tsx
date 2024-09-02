@@ -103,7 +103,7 @@ const MonthlyView: React.FC<{ budgetDetails: Record<string, any> }> = ({ budgetD
                     return txDate.getMonth() === prevMonthDate.getMonth() && txDate.getFullYear() === prevMonthDate.getFullYear();
                 });
 
-                prevMonthTransactions.forEach(tx => {
+                prevMonthTransactions.forEach((tx: { category: string; amount: number; }) => {
                     if (tx.category === 'Work Income' || tx.category === 'Misc. Income') {
                         prevMonthRunningBalance += tx.amount;
                     } else {
