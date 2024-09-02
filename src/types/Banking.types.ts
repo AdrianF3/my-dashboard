@@ -16,7 +16,7 @@ export interface Transaction {
 }
 
 export interface BankAccount {
-    type: 'Checking' | 'Savings' | 'Credit Card' | 'Loan';
+    type: 'Checking' | 'Savings';
     name: string;
     url: string;
     notes?: string;
@@ -51,15 +51,6 @@ export const bankAccounts: BankAccount[] = [
         startingBalance: 2500,
         accountStartDate: Timestamp.fromDate(new Date(2024, 5, 0o1))
     },
-    {
-        type: 'Credit Card',
-        name: 'Rewards Credit Card',
-        url: 'https://www.bank.com/rewards-credit-card',
-        notes: 'Use for all online purchases',
-        status: 'active',
-        accountID: 'acc003',
-        accountStartDate: Timestamp.fromDate(new Date(2024, 5, 0o1))
-    }
 ];
 
 
@@ -96,10 +87,7 @@ const getTransactionType = (accountType: BankAccount['type']): Transaction['type
     switch (accountType) {
         case 'Checking':
         case 'Savings':
-            return Math.random() > 0.5 ? 'income' : 'expense';
-        case 'Credit Card':
-        case 'Loan':
-            return Math.random() > 0.5 ? 'debt purchase' : 'debt payment';
+            return Math.random() > 0.5 ? 'income' : 'expense';    
         default:
             return 'expense'; // Default to 'expense' if account type is unknown
     }

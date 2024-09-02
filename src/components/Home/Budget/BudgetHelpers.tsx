@@ -13,11 +13,11 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
     const timelineData: TimelineEntry[] = [];
 
     bankAccounts.forEach(account => {
-        currentBalances[account.accountID] = account.startingBalance || 0;        
+        currentBalances[account.accountID] = account.startingBalance || 0;
         detailedSummaries[account.accountID] = {
             accountID: account.accountID,
             name: account.name,
-            type: account.type,
+            type: account.type,  // Checking or Savings only
             url: account.url,
             status: account.status,
             startingBalance: account.startingBalance || 0,
@@ -44,12 +44,6 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
                     currentBalances[tx.accountID] += tx.amount;
                 } else if (tx.type === 'expense') {
                     currentBalances[tx.accountID] -= tx.amount;
-                }
-            } else if (account.type === 'Credit Card' || account.type === 'Loan') {
-                if (tx.type === 'debt purchase') {
-                    currentBalances[tx.accountID] -= tx.amount;
-                } else if (tx.type === 'debt payment') {
-                    currentBalances[tx.accountID] += tx.amount;
                 }
             }
 
@@ -88,34 +82,4 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
         sortOptions,
         timelineData
     };
-};
-
-// Sample function to generate 150 transactions
-export const generateSampleTransactions = (): Transaction[] => {
-    const categories = ['Groceries', 'Rent', 'Utilities', 'Work Income', 'Misc. Income', 'Dining', 'Entertainment'];
-    const types: Array<'expense' | 'income' | 'debt purchase' | 'debt payment'> = ['expense', 'income', 'debt purchase', 'debt payment'];
-    const bankAccountIDs = ['account1', 'account2', 'account3'];
-
-    const transactions: Transaction[] = [];
-
-    for (let i = 0; i < 150; i++) {
-        const type = types[Math.floor(Math.random() * types.length)];
-        let category = categories[Math.floor(Math.random() * categories.length)];
-
-        if (type === 'income') {
-            category = Math.random() > 0.5 ? 'Work Income' : 'Misc. Income';
-        }
-
-        transactions.push({
-            id: `tx-${i}`,
-            accountID: bankAccountIDs[Math.floor(Math.random() * bankAccountIDs.length)],
-            date: Timestamp.fromDate(new Date(2023, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)),
-            description: `Sample transaction ${i + 1}`,
-            amount: parseFloat((Math.random() * 500 + 50).toFixed(2)),
-            type,  // The type is now correctly typed
-            category
-        });
-    }
-
-    return transactions;
 };

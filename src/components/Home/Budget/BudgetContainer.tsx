@@ -36,9 +36,7 @@ const BudgetContainer: React.FC = () => {
             setBudgetStatus('ready');
         }
     }, []);
-
-    console.log('budgetDetails', budgetDetails)
-    console.log('budgetData', budgetData)
+    
 
     // Function to toggle the visibility of an account in budgetDetails.detailedSummaries
     const toggleAccountVisibility = (accountID: string) => {
@@ -117,7 +115,7 @@ const BudgetContainer: React.FC = () => {
         }
 
     }
-
+    console.log('budgetDetails', budgetDetails)
 
     if (budgetStatus === 'empty') {
         return <div>No events could be found...</div>;
@@ -214,7 +212,7 @@ const BudgetContainer: React.FC = () => {
                         <TransactionView budgetDetails={budgetDetails} /> : null } 
                         { budgetDetails.viewOptions === 'Timeline' ?
                         <TimelineView budgetDetails={budgetDetails} /> : null } 
-                        { budgetDetails.viewOptions === 'Month' ?
+                        { ( budgetDetails.viewOptions === 'Month' && budgetDetails.budgetEndDate ) ?
                         <MonthlyView budgetDetails={budgetDetails} /> : null } 
                             
                     </> : null}
