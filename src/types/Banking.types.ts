@@ -94,7 +94,7 @@ const getTransactionType = (accountType: BankAccount['type']): Transaction['type
 };
 
 // Placeholder data for 100 transactions
-export const transactions: Transaction[] = Array.from({ length: 100 }, (_, i) => {
+export const transactions: Transaction[] = Array.from({ length: 150 }, (_, i) => {
     const month = Math.floor(i / 33) + 5; // Spread across 3 months (May, June, July)
     const day = (i % 30) + 1;
     const date = new Date(2024, month - 1, day); // Months are 0-indexed in JS Date

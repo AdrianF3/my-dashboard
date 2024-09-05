@@ -52,7 +52,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
                         </tr>
                     ))}
                     {/* Daily Differences Row */}
-                    <tr className="bg-slate-300">
+                    <tr className="bg-slate-300 border-t-2 border-blue-600">
                         <td className="border p-2 font-bold">Daily Difference</td>
                         {allDates.map((date, i) => {
                             const dailyDiff = dailyDifferences[date] || 0;                            

@@ -68,7 +68,7 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
 
     const budgetStartDate = transactions[0]?.date || null;
     const budgetEndDate = transactions[transactions.length - 1]?.date || null;
-    const viewOptions = 'Transaction';
+    const viewOptions = 'Month';
     const sortOptions = 'Descending';
 
     return {
@@ -83,3 +83,6 @@ export const calcBankDetails = (bankAccounts: BankAccount[], transactions: Trans
         timelineData
     };
 };
+
+
+

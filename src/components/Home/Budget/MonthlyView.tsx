@@ -21,6 +21,13 @@ const generateDateRange = (currentDate: Date) => {
     });
 };
 
+// New: Generate all months in a year
+const generateYearRange = (currentYear: number) => {
+    return Array.from({ length: 12 }, (_, index) => {
+        return new Date(currentYear, index, 1);
+    });
+};
+
 const MonthlyView: React.FC<{ budgetDetails: Record<string, any> }> = ({ budgetDetails }) => {
     const initialDate = new Date(budgetDetails.budgetEndDate.toDate().getFullYear(), budgetDetails.budgetEndDate.toDate().getMonth(), 1);
     const [currentDate, setCurrentDate] = useState<Date>(initialDate);
@@ -44,6 +51,7 @@ const MonthlyView: React.FC<{ budgetDetails: Record<string, any> }> = ({ budgetD
         return a.localeCompare(b);
     });
 
+    // Monthly Calculation
     const allDates = generateDateRange(currentDate);
     const transactionMatrix: Record<string, Record<string, number>> = {};
     const dailyDifferences: Record<string, number> = {};
@@ -61,11 +69,14 @@ const MonthlyView: React.FC<{ budgetDetails: Record<string, any> }> = ({ budgetD
                 if (!transactionMatrix[tx.category][txDate]) {
                     transactionMatrix[tx.category][txDate] = 0;
                 }
-                transactionMatrix[tx.category][txDate] += tx.amount;
-                if (['Work Income', 'Misc. Income'].includes(tx.category)) {
-                    dailyDifferences[txDate] = (dailyDifferences[txDate] || 0) + tx.amount;
-                } else {
-                    dailyDifferences[txDate] = (dailyDifferences[txDate] || 0) - tx.amount;
+
+                const txAmount = tx.type === 'expense' ? -Math.abs(Number(tx.amount)) : Number(tx.amount);
+                transactionMatrix[tx.category][txDate] += txAmount;
+
+                if (tx.type === 'income') {
+                    dailyDifferences[txDate] = (dailyDifferences[txDate] || 0) + txAmount;
+                } else if (tx.type === 'expense') {
+                    dailyDifferences[txDate] = (dailyDifferences[txDate] || 0) - Math.abs(txAmount);
                 }
             }
         });
@@ -77,11 +88,43 @@ const MonthlyView: React.FC<{ budgetDetails: Record<string, any> }> = ({ budgetD
         dailyBalances[date] = runningBalance;
     });
 
-    const totalIncome = Object.values(transactionMatrix).flatMap(cat => Object.values(cat)).reduce((acc, amount) => acc + (amount > 0 ? amount : 0), 0);
-    const totalExpenses = Object.values(transactionMatrix).flatMap(cat => Object.values(cat)).reduce((acc, amount) => acc + (amount < 0 ? amount : 0), 0);
+    const totalIncome = Object.values(transactionMatrix)
+        .flatMap(cat => Object.values(cat))
+        .reduce((acc, amount) => acc + (amount > 0 ? amount : 0), 0);
+
+    const totalExpenses = Object.entries(transactionMatrix)
+        .flatMap(([_, transactions]) => Object.values(transactions))
+        .reduce((acc, amount) => acc + (amount < 0 ? Math.abs(amount) : 0), 0);
+
     const monthlyEndingBalance = runningBalance;
     const currentMonthStartingBalance = dailyBalances[allDates[0]] || startingBalance;
-    console.log('dailyDifferences', dailyDifferences)
+
+    // New: Yearly Calculation
+    const currentYear = currentDate.getFullYear();
+    const yearlyMonths = generateYearRange(currentYear);
+
+    let yearlyIncome = 0;
+    let yearlyExpenses = 0;
+    let yearlyStartingBalance = startingBalance;
+    let yearlyEndingBalance = startingBalance;
+
+    yearlyMonths.forEach(monthDate => {
+        const monthTransactions = Object.values(budgetDetails.detailedSummaries).flatMap((summary: any) => {
+            return summary.transactions.filter((tx: Transaction) => tx.date.toDate().getFullYear() === currentYear);
+        });
+    
+        monthTransactions.forEach((tx: Transaction) => {
+            const txAmount = tx.type === 'expense' ? -Math.abs(Number(tx.amount)) : Number(tx.amount);
+    
+            if (tx.type === 'income') {
+                yearlyIncome += txAmount;
+            } else if (tx.type === 'expense') {
+                yearlyExpenses += Math.abs(txAmount);
+            }
+        });
+    });
+
+    yearlyEndingBalance += yearlyIncome - yearlyExpenses;
 
     return (
         <div className="my-4 bg-slate-700/20 p-4 rounded">
@@ -98,14 +141,36 @@ const MonthlyView: React.FC<{ budgetDetails: Record<string, any> }> = ({ budgetD
                 dailyDifferences={dailyDifferences}
                 dailyBalances={dailyBalances}  // Pass the running balance to the CategoryTable
             />
+            <div className='flex flex-col min-w-[250px] max-w-sm justify-center'>
+                <h3>Trends</h3>
+                {/* Switch between Monthly and Yearly */}
+                <button className={`btn ${activeTab === 'monthly' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('monthly')}>
+                    Monthly
+                </button>
+                <button className={`btn ${activeTab === 'yearly' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab('yearly')}>
+                    Yearly
+                </button>
+            </div>
+            
             {activeTab === 'monthly' && (
                 <Trends
                     title={`${getMonthYearString(currentDate)} Trends`}
                     startingBalance={currentMonthStartingBalance}
                     totalIncome={totalIncome}
-                    totalExpenses={Math.abs(totalExpenses)}
-                    difference={totalIncome + totalExpenses}
+                    totalExpenses={totalExpenses}
+                    difference={totalIncome - totalExpenses}
                     endingBalance={monthlyEndingBalance}
+                />
+            )}
+
+            {activeTab === 'yearly' && (
+                <Trends
+                    title={`${currentYear} Yearly Trends`}
+                    startingBalance={yearlyStartingBalance}
+                    totalIncome={yearlyIncome}
+                    totalExpenses={yearlyExpenses}
+                    difference={yearlyIncome - yearlyExpenses}
+                    endingBalance={yearlyEndingBalance}
                 />
             )}
         </div>

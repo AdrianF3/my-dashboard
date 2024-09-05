@@ -163,7 +163,7 @@ const BudgetContainer: React.FC = () => {
                         </div>
                     </div>
                     {/* Right Section */}
-                    <div className='flex flex-col m-2'>
+                    <div className='flex flex-col gap-2 min-w-[250px] max-w-sm justify-center'>
                         {/* Options for Different Views and Sorting Options */}                            
                         {/* View Options */}
                         <div className='flex flex-row min-w-[250px] max-w-sm justify-center'>
@@ -185,7 +185,7 @@ const BudgetContainer: React.FC = () => {
                         </div>
                         {/* Sort Options */}
                         { budgetDetails.viewOptions === 'Transaction' ? <>
-                            <div className='flex flex-row min-w-[250px] max-w-sm justify-center'>
+                            <div className='flex flex-col gap-2 min-w-[250px] max-w-sm justify-center'>
                                 {/* Sort Ascending */}
                                 <button className={`btn ${budgetDetails.sortOptions === 'Ascending' ? 'btn-primary' : 'btn-secondary'}`} onClick={() => updateViewSortOptions(null, 'Ascending')}>
                                     <TbSortAscending2 />
@@ -197,7 +197,17 @@ const BudgetContainer: React.FC = () => {
                                     Descending
                                 </button>                                
                             </div>
-                        </> : null }
+                        </> : null }                        
+                    </div>
+
+                    {/* Third Section */}
+                    <div className='flex flex-col gap-2 min-w-[250px] max-w-sm justify-center'>
+                        {/* Add Transactions Button */}
+                        <button className='btn btn-primary'>Add Transaction</button>
+
+
+                        {/* Upload CSV button */}
+                        <button className='btn btn-primary'>Upload CSV File</button>
                     </div>
                 </div>
                 
@@ -217,16 +227,6 @@ const BudgetContainer: React.FC = () => {
                             
                     </> : null}
                 </div>
-                    
-
-
-                    
-                
-                
-                    
-
-
-
             </section>
         </Suspense>
     );
