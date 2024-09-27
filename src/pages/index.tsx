@@ -14,7 +14,6 @@ import { getFirestore, setDoc, doc } from 'firebase/firestore';
 import { CgProfile, CgList, CgBookmark, CgCalendarDates } from "react-icons/cg";
 import { BiMoneyWithdraw } from "react-icons/bi";
 import { TbLayoutDashboard } from "react-icons/tb";
-import { LuListTodo } from "react-icons/lu";
 import { MdOutlineLibraryAdd } from "react-icons/md";
 import LoginForm from '@/components/Home/DashboardGridComponents/LoginForm';
 import RecipesDisplay from '@/components/Home/RecipeView/RecipesDisplay';
@@ -29,12 +28,14 @@ interface IndexPageProps {
     authenticated: boolean;
 }
 
+const dashboardToLoad: string = process.env.NEXT_PUBLIC_DASHBOARD_TO_LOAD || 'dashboard'; // Fallback to a default value
+
 const IndexPage: React.FC = ({  }) => {
     const { user, loading: authLoading, logout } = useAuth();
     const [ profileUID, setProfileUID ] = useState<any>(null);
     const authenticated = !!user;
     // Possible Options: dashboard, recipes, bookmarks, important-dates, to-do, habit-tracking, budget, profile-settings
-    const [currentView, setCurrentView] = React.useState<string>("budget");
+    const [currentView, setCurrentView] = React.useState<string>(dashboardToLoad);
     const { profile, loading, error } = useUserProfile(profileUID);    
     const [ theme, setTheme ] = React.useState('nord');
     const listOfThemes = [
@@ -72,7 +73,7 @@ const IndexPage: React.FC = ({  }) => {
         "sunset",
       ];
 
-
+      console.log('dashboardToLoad', dashboardToLoad)
     // Set the theme on initial load
     React.useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);

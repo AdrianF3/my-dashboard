@@ -9,6 +9,7 @@ Building simple, helpful tools to help manage life.
 #### Version 0.1.66F - Started 9/01/2024 - Ended #/#/2024
 - Continued Working on budget app and properly display of MonthlyView :: -A
 - Continued working on Monthly view and improving layout/inital calculations:: -B
+- Update to Index page and enviromental variable to update inital dashboard being loaded
 
 
 
