@@ -9,6 +9,7 @@ import { MdOutlinePrivacyTip } from 'react-icons/md';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { GrLinkNext, GrLinkPrevious } from 'react-icons/gr';
+import BookmarkList from "./BookmarkList";
 
 
 
@@ -235,23 +236,13 @@ const BookmarkDisplay: React.FC<{ profile: UserProfile | null; }> = ({ profile }
                     </div>
 
                     {/* Bookmark Display for Selected Category */}
-                    {selectedCategory && selectedCategory.bookmarks &&  (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full justify-center">
-                        {selectedCategory.bookmarks.map((bookmark, index) => (
-                          <div className="flex flex-col items-center p-2" key={index}>
-                            <Link href={bookmark.url} target="_blank">
-                              <div className="flex flex-col text-center btn btn-outline">
-                                <p>{bookmark.description}</p>
-                                {!selectedCategory.isPrivate && <p className="text-sm italic">{bookmark.url}</p>}
-                              </div>
-                            </Link>
-                            <button className="text-error m-2 p-2 bg-accent/40 hover:bg-error hover:text-primary-content hover:text-semibold rounded-xl" onClick={() => handleBookmarkDelete(bookmark)}>
-                              <AiOutlineDelete size={15} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {selectedCategory && selectedCategory.bookmarks && (
+  <BookmarkList
+    bookmarks={selectedCategory.bookmarks}
+    onDelete={handleBookmarkDelete}
+    isPrivate={selectedCategory.isPrivate}
+  />
+)}
 
                     {/* Category Options */}
                     <div className="mt-10 p-4 border-t-2 border-accent text-center">
