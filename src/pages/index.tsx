@@ -72,8 +72,7 @@ const IndexPage: React.FC = ({  }) => {
         "nord",
         "sunset",
       ];
-
-      console.log('dashboardToLoad', dashboardToLoad)
+      
     // Set the theme on initial load
     React.useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);

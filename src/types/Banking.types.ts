@@ -93,11 +93,18 @@ const getTransactionType = (accountType: BankAccount['type']): Transaction['type
     }
 };
 
-// Placeholder data for 100 transactions
-export const transactions: Transaction[] = Array.from({ length: 150 }, (_, i) => {
-    const month = Math.floor(i / 33) + 5; // Spread across 3 months (May, June, July)
+
+// Placeholder data for 200 transactions
+export const transactions: Transaction[] = Array.from({ length: 200 }, (_, i) => {
+    const currentDate = new Date();
+    const startMonth = currentDate.getMonth(); // Get the current month (October 2024)
+    const year = currentDate.getFullYear();    // Get the current year (2024)
+
+    // Spread transactions over 3 months (October, November, December)
+    const month = Math.floor(i / 67) + startMonth;
     const day = (i % 30) + 1;
-    const date = new Date(2024, month - 1, day); // Months are 0-indexed in JS Date
+    const date = new Date(year, month, day);
+
     const category = getRandomCategory();
     const accountID = `acc00${(i % 3) + 1}`; // Cycling through 3 different accounts
     const accountType = bankAccounts.find(acc => acc.accountID === accountID)?.type || 'Checking';
@@ -114,4 +121,3 @@ export const transactions: Transaction[] = Array.from({ length: 150 }, (_, i) =>
         recurring: category === 'Rent' || category === 'Utilities' ? true : false,
     };
 });
-

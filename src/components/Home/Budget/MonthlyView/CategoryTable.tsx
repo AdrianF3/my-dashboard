@@ -16,8 +16,19 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
     dailyDifferences,
     dailyBalances
 }) => {
-    console.log('All dates for rendering:', allDates);
-    console.log('Transaction matrix:', transactionMatrix);
+
+    const calcCellBGColor = (dailyDifference: number) => {
+        if (dailyDifference > 0) {
+            return 'bg-green-100'
+        }  
+        if (dailyDifference === 0) {
+            return ''
+        }
+        if (dailyDifference < 0) {
+            return 'bg-red-100'
+        }
+    }
+    
 
     return (
         <div className="overflow-x-auto">
@@ -38,7 +49,8 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
                             <td className="border p-2 font-bold">{category}</td>
                             {allDates.map((date, i) => {
                                 const amount = transactionMatrix[category][date] || 0;                                
-                                const bgColor = (category === 'Misc. Income' || category === 'Work Income') && amount > 0 ? 'bg-green-100' : (amount > 0 ? 'bg-red-100' : '');
+                                // const bgColor = (category === 'Misc. Income' || category === 'Work Income') && amount > 0 ? 'bg-green-100' : (amount > 0 ? 'bg-red-100' : '');
+                                const bgColor = calcCellBGColor(amount)
                                 return (
                                     <td key={i} className={`border p-2 text-right ${bgColor}`}>
                                         {amount !== 0 ? `$${amount.toFixed(2)}` : '-'}
@@ -56,7 +68,8 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
                         <td className="border p-2 font-bold">Daily Difference</td>
                         {allDates.map((date, i) => {
                             const dailyDiff = dailyDifferences[date] || 0;                            
-                            const bgColor = dailyDiff > 0 ? 'bg-green-100' : (dailyDiff < 0 ? 'bg-red-100' : '');
+                            // const bgColor = dailyDiff > 0 ? 'bg-green-100' : (dailyDiff < 0 ? 'bg-red-100' : '');
+                            const bgColor = calcCellBGColor(dailyDiff)
                             return (
                                 <td key={i} className={`border p-2 text-right font-bold ${bgColor}`}>
                                     ${dailyDiff.toFixed(2)}

@@ -156,7 +156,7 @@ const Dashboard: React.FC<{ profile: UserProfile | null; }> = ({ profile }) => {
     
 
     return (
-        <div className="flex flex-col h-screen gap-4 justify-around rounded border-2 border-accent self-center p-4">
+        <div className="flex flex-col h-fit gap-4 justify-around rounded border-2 border-accent self-center p-4">
                     {/* Date/Time & Weather Card */}
             <div className="card w-full h-fit bg-base-100 shadow-xl image-full">                
                 <div className="card-body flex flex-col md:flex-row justify-between">
